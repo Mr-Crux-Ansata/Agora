@@ -112,7 +112,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTag, setFilterTag] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
-  const deliberationEnabled = currentPhase === 'deliberate';
+  const deliberationEnabled = currentPhase === 'community_deliberation';
 
   const allTags = Array.from(new Set(mockDiscussions.flatMap(d => d.tags)));
 
@@ -158,7 +158,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
         <p className="app-subtle">Unete a la conversacion sobre proyectos de presupuesto publico</p>
         {!deliberationEnabled && (
           <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            La participacion en debates esta bloqueada en la fase actual. Cambia a Deliberate Phase para habilitarla.
+            La participacion en debates esta bloqueada en la fase actual. Debe estar activa la fase Community Deliberation.
           </div>
         )}
       </div>
@@ -214,7 +214,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
           }`}
         >
           {deliberationEnabled ? <MessageCircle className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-          {deliberationEnabled ? 'Iniciar una Nueva Discusión' : 'Disponible solo en Deliberate Phase'}
+          {deliberationEnabled ? 'Iniciar una Nueva Discusión' : 'Disponible solo en Community Deliberation'}
         </button>
       </div>
 

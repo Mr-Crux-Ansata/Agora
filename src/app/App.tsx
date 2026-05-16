@@ -8,7 +8,31 @@ import Impact from './components/Impact';
 import AuthScreen from './components/AuthScreen';
 
 type Page = 'home' | 'map' | 'proposals' | 'discussions' | 'impact';
-export type ParticipationPhase = 'discover' | 'propose' | 'evaluate' | 'deliberate' | 'vote';
+export type ParticipationPhase =
+  | 'discovery'
+  | 'proposal_submission'
+  | 'institutional_evaluation'
+  | 'community_deliberation'
+  | 'voting'
+  | 'results_publication'
+  | 'continuous_project_tracking';
+
+export type ProposalState =
+  | 'draft'
+  | 'community_preview'
+  | 'in_preparation'
+  | 'officially_submitted'
+  | 'under_institutional_review'
+  | 'submitted'
+  | 'under_review'
+  | 'approved'
+  | 'rejected'
+  | 'in_deliberation'
+  | 'open_for_voting'
+  | 'winning_project'
+  | 'in_progress'
+  | 'delayed'
+  | 'completed';
 
 export interface Proposal {
   id: string;
@@ -21,7 +45,11 @@ export interface Proposal {
   budget: number;
   votes: number;
   comments: number;
-  status: 'voting' | 'approved' | 'construction' | 'completed';
+  state: ProposalState;
+  isWinningProject?: boolean;
+  rejectionReason?: 'exceeds_budget_limit' | 'outside_jurisdiction' | 'technical_infeasibility' | 'duplicate_proposal';
+  technicalFeedback?: string;
+  suggestedModifications?: string;
   daysLeft?: number;
   createdAt: string;
   image: string;
@@ -40,7 +68,7 @@ const initialProposals: Proposal[] = [
     budget: 150000,
     votes: 342,
     comments: 28,
-    status: 'voting',
+    state: 'open_for_voting',
     daysLeft: 12,
     createdAt: '2026-05-10',
     image: 'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop',
@@ -57,7 +85,8 @@ const initialProposals: Proposal[] = [
     budget: 250000,
     votes: 521,
     comments: 45,
-    status: 'construction',
+    state: 'in_progress',
+    isWinningProject: true,
     createdAt: '2026-04-20',
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop',
     peopleBenefited: 8000
@@ -73,7 +102,8 @@ const initialProposals: Proposal[] = [
     budget: 75000,
     votes: 287,
     comments: 34,
-    status: 'completed',
+    state: 'completed',
+    isWinningProject: true,
     createdAt: '2026-03-15',
     image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&auto=format&fit=crop',
     peopleBenefited: 300
@@ -89,7 +119,8 @@ const initialProposals: Proposal[] = [
     budget: 200000,
     votes: 456,
     comments: 52,
-    status: 'approved',
+    state: 'delayed',
+    isWinningProject: true,
     createdAt: '2026-05-01',
     image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&auto=format&fit=crop',
     peopleBenefited: 10000
@@ -105,7 +136,10 @@ const initialProposals: Proposal[] = [
     budget: 120000,
     votes: 198,
     comments: 16,
-    status: 'voting',
+    state: 'rejected',
+    rejectionReason: 'outside_jurisdiction',
+    technicalFeedback: 'La zona de ejecucion propuesta corresponde a una vialidad estatal fuera del ambito municipal.',
+    suggestedModifications: 'Redefinir el poligono del proyecto a vialidades bajo jurisdiccion municipal y volver a enviar.',
     daysLeft: 8,
     createdAt: '2026-05-12',
     image: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?w=800&auto=format&fit=crop',
@@ -122,7 +156,10 @@ const initialProposals: Proposal[] = [
     budget: 350000,
     votes: 612,
     comments: 78,
-    status: 'voting',
+    state: 'rejected',
+    rejectionReason: 'exceeds_budget_limit',
+    technicalFeedback: 'El costo estimado supera el techo presupuestal aprobado para esta convocatoria.',
+    suggestedModifications: 'Dividir el proyecto en etapas y presentar una version ajustada al limite de presupuesto.',
     daysLeft: 15,
     createdAt: '2026-05-05',
     image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop',
@@ -136,28 +173,61 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [proposals, setProposals] = useState<Proposal[]>(initialProposals);
   const [showCreateProposal, setShowCreateProposal] = useState(false);
-  const [currentPhase, setCurrentPhase] = useState<ParticipationPhase>('discover');
+  const [currentPhase, setCurrentPhase] = useState<ParticipationPhase>('discovery');
 
   const navigateWithPhase = (page: Page) => {
     setCurrentPage(page);
   };
 
   const openCreateProposal = () => {
-    if (currentPhase !== 'propose') return;
+    if (currentPhase !== 'proposal_submission') return;
     setShowCreateProposal(true);
   };
 
-  const addProposal = (proposal: Omit<Proposal, 'id' | 'votes' | 'comments' | 'status' | 'daysLeft' | 'createdAt'>) => {
+  const addProposal = (proposal: Omit<Proposal, 'id' | 'votes' | 'comments' | 'state' | 'daysLeft' | 'createdAt'>) => {
     const newProposal: Proposal = {
       ...proposal,
       id: Date.now().toString(),
       votes: 0,
       comments: 0,
-      status: 'voting',
+      state: 'draft',
       daysLeft: 30,
       createdAt: new Date().toISOString().split('T')[0]
     };
     setProposals(prev => [newProposal, ...prev]);
+  };
+
+  const transitionProposalState = (proposalId: string, nextState: ProposalState) => {
+    const allowedTransitions: Record<ProposalState, ProposalState[]> = {
+      draft: ['community_preview'],
+      community_preview: ['in_preparation'],
+      in_preparation: ['officially_submitted'],
+      officially_submitted: ['under_institutional_review'],
+      under_institutional_review: ['approved', 'rejected', 'in_deliberation'],
+      submitted: ['under_review'],
+      under_review: ['approved', 'rejected'],
+      approved: ['in_deliberation', 'open_for_voting'],
+      rejected: [],
+      in_deliberation: ['open_for_voting'],
+      open_for_voting: ['winning_project'],
+      winning_project: ['in_progress'],
+      in_progress: ['completed', 'delayed'],
+      delayed: ['in_progress', 'completed'],
+      completed: []
+    };
+
+    setProposals((prev) =>
+      prev.map((proposal) => {
+        if (proposal.id !== proposalId) return proposal;
+        const canTransition = allowedTransitions[proposal.state]?.includes(nextState);
+        if (!canTransition) return proposal;
+
+        return {
+          ...proposal,
+          state: nextState
+        };
+      })
+    );
   };
 
   const renderPage = () => {
@@ -173,13 +243,13 @@ export default function App() {
           />
         );
       case 'map':
-        return <MapView />;
+        return <MapView proposals={proposals} />;
       case 'proposals':
-        return <Proposals proposals={proposals} currentPhase={currentPhase} />;
+        return <Proposals proposals={proposals} currentPhase={currentPhase} onProposalStateChange={transitionProposalState} />;
       case 'discussions':
         return <Discussions currentPhase={currentPhase} />;
       case 'impact':
-        return <Impact />;
+        return <Impact proposals={proposals} />;
       default:
         return (
           <Home

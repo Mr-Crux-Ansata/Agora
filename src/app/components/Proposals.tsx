@@ -9,119 +9,21 @@ import {
   Users,
   CheckCircle2,
   Clock,
-  Lock
+  Lock,
+  Bot,
+  Sparkles,
+  ArrowRight
 } from 'lucide-react';
 
-import { ParticipationPhase, Proposal } from '../App';
+import { ParticipationPhase, Proposal, ProposalState } from '../App';
 
 interface ProposalsProps {
   proposals: Proposal[];
   currentPhase: ParticipationPhase;
+  onProposalStateChange: (proposalId: string, nextState: ProposalState) => void;
 }
 
-const _mockProposals: Proposal[] = [
-  {
-    id: '1',
-    title: 'Community Park Renovation',
-    description: 'Renovate the local park with new playground equipment, walking paths, and green spaces for families to enjoy.',
-    author: 'Maria Santos',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria',
-    neighborhood: 'Downtown',
-    category: 'Parks & Recreation',
-    budget: 150000,
-    votes: 342,
-    comments: 28,
-    status: 'voting',
-    daysLeft: 12,
-    createdAt: '2026-05-10',
-    image: 'https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop',
-    peopleBenefited: 5000
-  },
-  {
-    id: '2',
-    title: 'New Bike Lanes on Main Street',
-    description: 'Install protected bike lanes to improve cyclist safety and encourage sustainable transportation throughout downtown.',
-    author: 'John Chen',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
-    neighborhood: 'Downtown',
-    category: 'Infrastructure',
-    budget: 250000,
-    votes: 521,
-    comments: 45,
-    status: 'construction',
-    createdAt: '2026-04-20',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop',
-    peopleBenefited: 8000
-  },
-  {
-    id: '3',
-    title: 'Urban Garden Initiative',
-    description: 'Create community gardens for local residents to grow vegetables and connect with neighbors.',
-    author: 'Ana Rodriguez',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ana',
-    neighborhood: 'South District',
-    category: 'Environment',
-    budget: 75000,
-    votes: 287,
-    comments: 34,
-    status: 'completed',
-    createdAt: '2026-03-15',
-    image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&auto=format&fit=crop',
-    peopleBenefited: 300
-  },
-  {
-    id: '4',
-    title: 'Public Library Technology Upgrade',
-    description: 'Modernize the library with new computers, high-speed internet, and digital learning resources for all ages.',
-    author: 'David Kim',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-    neighborhood: 'East Side',
-    category: 'Education',
-    budget: 200000,
-    votes: 456,
-    comments: 52,
-    status: 'approved',
-    createdAt: '2026-05-01',
-    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&auto=format&fit=crop',
-    peopleBenefited: 10000
-  },
-  {
-    id: '5',
-    title: 'Street Lighting Enhancement',
-    description: 'Install energy-efficient LED street lights to improve safety and reduce energy costs.',
-    author: 'Sofia Martinez',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia',
-    neighborhood: 'West End',
-    category: 'Infrastructure',
-    budget: 120000,
-    votes: 198,
-    comments: 16,
-    status: 'voting',
-    daysLeft: 8,
-    createdAt: '2026-05-12',
-    image: 'https://images.unsplash.com/photo-1513828583688-c52646db42da?w=800&auto=format&fit=crop',
-    peopleBenefited: 3000
-  },
-  {
-    id: '6',
-    title: 'Community Center Expansion',
-    description: 'Expand the local community center with new multipurpose rooms for classes, events, and community gatherings.',
-    author: 'Michael Brown',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
-    neighborhood: 'North Hills',
-    category: 'Community',
-    budget: 350000,
-    votes: 612,
-    comments: 78,
-    status: 'voting',
-    daysLeft: 15,
-    createdAt: '2026-05-05',
-    image: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop',
-    peopleBenefited: 15000
-  }
-];
-
-export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
+export default function Proposals({ proposals, currentPhase, onProposalStateChange }: ProposalsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -130,6 +32,7 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
   const [votedProposals, setVotedProposals] = useState<Set<string>>(new Set());
   const [testVotingDeadline] = useState(() => Date.now() + 48 * 60 * 60 * 1000);
   const [now, setNow] = useState(Date.now());
+  const currentYear = new Date().getFullYear();
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -139,11 +42,15 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
     return () => window.clearInterval(timer);
   }, []);
 
-  const filteredProposals = proposals
+  const currentYearProposals = proposals.filter(
+    (proposal) => new Date(proposal.createdAt).getFullYear() === currentYear
+  );
+
+  const filteredProposals = currentYearProposals
     .filter(p => {
       if (searchTerm && !p.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
           !p.description.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-      if (filterStatus !== 'all' && p.status !== filterStatus) return false;
+      if (filterStatus !== 'all' && p.state !== filterStatus) return false;
       if (filterCategory !== 'all' && p.category !== filterCategory) return false;
       return true;
     })
@@ -154,7 +61,16 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
       return 0;
     });
 
-  const votingEnabled = currentPhase === 'vote';
+  const filteredOperationalProposals = filteredProposals.filter(
+    (proposal) => !(proposal.isWinningProject && ['completed', 'in_progress', 'delayed'].includes(proposal.state))
+  );
+
+  const proposalsForCurrentPhase =
+    currentPhase === 'results_publication'
+      ? filteredOperationalProposals.filter((proposal) => proposal.state === 'approved' || proposal.state === 'rejected')
+      : filteredOperationalProposals;
+
+  const votingEnabled = currentPhase === 'voting';
   const remainingMs = Math.max(0, testVotingDeadline - now);
   const isCountdownFinished = remainingMs === 0;
   const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
@@ -163,7 +79,7 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
   const seconds = Math.floor((remainingMs / 1000) % 60);
 
   const handleVote = (proposalId: string) => {
-    if (!votingEnabled) return;
+    if (!votingEnabled || isCountdownFinished) return;
 
     setVotedProposals(prev => {
       const newSet = new Set(prev);
@@ -176,12 +92,62 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
     });
   };
 
+  const approvedProposals = currentYearProposals.filter((p) => p.state === 'approved');
+  const rejectedProposals = currentYearProposals.filter((p) => p.state === 'rejected');
+  const institutionalRows = currentYearProposals.filter((p) => p.state === 'approved' || p.state === 'rejected');
+
+  const rejectionReasonLabel: Record<NonNullable<Proposal['rejectionReason']>, string> = {
+    exceeds_budget_limit: 'Exceeds budget limit',
+    outside_jurisdiction: 'Outside institutional jurisdiction',
+    technical_infeasibility: 'Technical infeasibility',
+    duplicate_proposal: 'Duplicate proposal'
+  };
+
+  const communityStates: ProposalState[] = ['draft', 'community_preview', 'in_preparation'];
+  const officialStates: ProposalState[] = ['officially_submitted', 'under_institutional_review', 'under_review'];
+
+  const nextCommunityStep: Partial<Record<ProposalState, ProposalState>> = {
+    draft: 'community_preview',
+    community_preview: 'in_preparation',
+    in_preparation: 'officially_submitted',
+    officially_submitted: 'under_institutional_review'
+  };
+
+  const stateLabel: Partial<Record<ProposalState, string>> = {
+    draft: 'Draft',
+    community_preview: 'Community Preview',
+    in_preparation: 'In Preparation',
+    officially_submitted: 'Officially Submitted',
+    under_institutional_review: 'Under Institutional Review'
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="app-heading-lg mb-2">Propuestas Activas</h1>
-        <p className="app-subtle">Vota por los proyectos que importan a tu comunidad</p>
+        <p className="app-subtle">Vota por los proyectos del año {currentYear} que importan a tu comunidad</p>
+
+        <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-sky-200 bg-sky-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-sky-700 mb-2">Etapa 1 · Community Refinement</p>
+            <p className="text-sm text-sky-900 mb-2">Las propuestas se publican como borrador para recibir comentarios, mejorar claridad y medir interes barrial.</p>
+            <ul className="text-xs text-sky-800 space-y-1">
+              <li>• Estado editable y colaborativo</li>
+              <li>• Comentarios y sugerencias comunitarias habilitadas</li>
+              <li>• Asistencia IA para redaccion y estructura</li>
+            </ul>
+          </div>
+          <div className="rounded-xl border border-violet-200 bg-violet-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-violet-700 mb-2">Etapa 2 · Official Submission</p>
+            <p className="text-sm text-violet-900 mb-2">Al enviar oficialmente, la propuesta se bloquea para edicion y entra al flujo formal institucional.</p>
+            <ul className="text-xs text-violet-800 space-y-1">
+              <li>• Integridad procedimental y trazabilidad</li>
+              <li>• Edicion comunitaria deshabilitada</li>
+              <li>• Evaluacion institucional formal</li>
+            </ul>
+          </div>
+        </div>
 
         <div className={`mt-4 rounded-xl px-4 py-3 border ${
           isCountdownFinished
@@ -202,10 +168,71 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
 
         {!votingEnabled && (
           <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            La votacion esta bloqueada en la fase actual. Cambia a Vote Phase para habilitarla.
+            La votacion esta bloqueada en la fase actual. Debe estar activa la fase global Voting para habilitarla.
           </div>
         )}
       </div>
+
+      {(currentPhase === 'results_publication' || currentPhase === 'institutional_evaluation') && (
+        <div className="surface-card rounded-xl p-0 mb-6 overflow-hidden">
+          <div className="px-4 py-4 sm:px-5 bg-gradient-to-r from-slate-50 to-fuchsia-50/60 border-b border-slate-200">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-semibold text-slate-900">Dictamen institucional publico</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Transparencia de evaluacion: las propuestas rechazadas mantienen trazabilidad y motivo visible.</p>
+              </div>
+              <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-white border border-slate-200 text-slate-600">
+                {currentPhase === 'results_publication' ? 'Results Publication' : 'Institutional Evaluation'}
+              </span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2 text-xs">
+              <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Aprobadas: {approvedProposals.length}</span>
+              <span className="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-200">Rechazadas: {rejectedProposals.length}</span>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="bg-slate-100/80 text-slate-700">
+                  <th className="text-left px-4 py-3 font-semibold">Propuesta</th>
+                  <th className="text-left px-4 py-3 font-semibold">Dictamen</th>
+                  <th className="text-left px-4 py-3 font-semibold">Razon</th>
+                  <th className="text-left px-4 py-3 font-semibold">Feedback tecnico</th>
+                  <th className="text-left px-4 py-3 font-semibold">Correccion sugerida</th>
+                </tr>
+              </thead>
+              <tbody>
+                {institutionalRows.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-6 text-center text-slate-500">No hay dictamenes institucionales publicados.</td>
+                  </tr>
+                )}
+                {institutionalRows.map((proposal, index) => (
+                  <tr key={proposal.id} className={index % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}>
+                    <td className="px-4 py-3 font-medium text-slate-900">{proposal.title}</td>
+                    <td className="px-4 py-3">
+                      {proposal.state === 'approved' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">Aprobada</span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">Rechazada</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-slate-700">
+                      {proposal.state === 'rejected'
+                        ? (proposal.rejectionReason ? rejectionReasonLabel[proposal.rejectionReason] : 'No especificado')
+                        : 'Cumple evaluacion institucional'}
+                    </td>
+                    <td className="px-4 py-3 text-slate-600">{proposal.technicalFeedback || 'Sin observaciones tecnicas'}</td>
+                    <td className="px-4 py-3 text-slate-600">{proposal.suggestedModifications || 'No requiere ajustes'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            </div>
+        </div>
+      )}
 
       {/* Search and Filters */}
       <div className="surface-card rounded-xl p-4 mb-6">
@@ -254,10 +281,21 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="all">Todos los Estados</option>
-                <option value="voting">Abierta a Votación</option>
-                <option value="approved">Aprobada</option>
-                <option value="construction">En Construcción</option>
-                <option value="completed">Completada</option>
+                <option value="submitted">Submitted</option>
+                <option value="under_review">Under Review</option>
+                <option value="draft">Draft</option>
+                <option value="community_preview">Community Preview</option>
+                <option value="in_preparation">In Preparation</option>
+                <option value="officially_submitted">Officially Submitted</option>
+                <option value="under_institutional_review">Under Institutional Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+                <option value="in_deliberation">In Deliberation</option>
+                <option value="open_for_voting">Open for Voting</option>
+                <option value="winning_project">Winning Project</option>
+                <option value="in_progress">In Progress</option>
+                <option value="delayed">Delayed</option>
+                <option value="completed">Completed</option>
               </select>
             </div>
             <div>
@@ -281,12 +319,12 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
 
       {/* Results Count */}
       <div className="mb-4 text-sm text-gray-600">
-        Mostrando {filteredProposals.length} {filteredProposals.length === 1 ? 'propuesta' : 'propuestas'}
+        Mostrando {proposalsForCurrentPhase.length} {proposalsForCurrentPhase.length === 1 ? 'propuesta' : 'propuestas'}
       </div>
 
       {/* Proposals Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredProposals.map((proposal) => (
+        {proposalsForCurrentPhase.map((proposal) => (
           <div key={proposal.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
             {/* Image */}
             <div className="h-48 bg-gray-200 relative">
@@ -296,26 +334,82 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-3 left-3">
-                {proposal.status === 'voting' && (
-                  <span className="px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full">
-                    Abierta a Votación
-                  </span>
-                )}
-                {proposal.status === 'approved' && (
+                {proposal.state === 'approved' && (
                   <span className="px-3 py-1 bg-violet-600 text-white text-xs font-medium rounded-full flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     Aprobada
                   </span>
                 )}
-                {proposal.status === 'construction' && (
+                {proposal.state === 'in_progress' && (
                   <span className="px-3 py-1 bg-fuchsia-600 text-white text-xs font-medium rounded-full">
                     En Progreso
                   </span>
                 )}
-                {proposal.status === 'completed' && (
+                {proposal.state === 'completed' && (
                   <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full flex items-center gap-1">
                     <CheckCircle2 className="w-3 h-3" />
                     Completada
+                  </span>
+                )}
+                {proposal.state === 'delayed' && (
+                  <span className="px-3 py-1 bg-amber-600 text-white text-xs font-medium rounded-full">
+                    Atrasada
+                  </span>
+                )}
+                {proposal.state === 'rejected' && (
+                  <span className="px-3 py-1 bg-rose-600 text-white text-xs font-medium rounded-full">
+                    Rechazada
+                  </span>
+                )}
+                {proposal.state === 'submitted' && (
+                  <span className="px-3 py-1 bg-slate-700 text-white text-xs font-medium rounded-full">
+                    Enviada
+                  </span>
+                )}
+                {proposal.state === 'draft' && (
+                  <span className="px-3 py-1 bg-sky-600 text-white text-xs font-medium rounded-full flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    Draft
+                  </span>
+                )}
+                {proposal.state === 'community_preview' && (
+                  <span className="px-3 py-1 bg-teal-600 text-white text-xs font-medium rounded-full">
+                    Community Preview
+                  </span>
+                )}
+                {proposal.state === 'in_preparation' && (
+                  <span className="px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
+                    In Preparation
+                  </span>
+                )}
+                {proposal.state === 'officially_submitted' && (
+                  <span className="px-3 py-1 bg-violet-700 text-white text-xs font-medium rounded-full">
+                    Officially Submitted
+                  </span>
+                )}
+                {proposal.state === 'under_institutional_review' && (
+                  <span className="px-3 py-1 bg-amber-700 text-white text-xs font-medium rounded-full">
+                    Under Institutional Review
+                  </span>
+                )}
+                {proposal.state === 'under_review' && (
+                  <span className="px-3 py-1 bg-amber-600 text-white text-xs font-medium rounded-full">
+                    En revision
+                  </span>
+                )}
+                {proposal.state === 'in_deliberation' && (
+                  <span className="px-3 py-1 bg-teal-600 text-white text-xs font-medium rounded-full">
+                    En deliberacion
+                  </span>
+                )}
+                {proposal.state === 'open_for_voting' && (
+                  <span className="px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full">
+                    Abierta a votacion
+                  </span>
+                )}
+                {proposal.state === 'winning_project' && (
+                  <span className="px-3 py-1 bg-emerald-700 text-white text-xs font-medium rounded-full">
+                    Proyecto ganador
                   </span>
                 )}
               </div>
@@ -389,13 +483,38 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
                 )}
               </div>
 
+              {proposal.state === 'rejected' && (
+                <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">
+                  <p className="font-semibold mb-1">Razon de rechazo</p>
+                  <p>
+                    {proposal.rejectionReason ? rejectionReasonLabel[proposal.rejectionReason] : 'No especificada por la institucion.'}
+                  </p>
+                  {proposal.technicalFeedback && <p className="mt-2 text-rose-800">Feedback tecnico: {proposal.technicalFeedback}</p>}
+                  {proposal.suggestedModifications && <p className="mt-1 text-rose-800">Sugerencia: {proposal.suggestedModifications}</p>}
+                </div>
+              )}
+
+              {communityStates.includes(proposal.state) && (
+                <div className="mb-4 rounded-lg border border-sky-200 bg-sky-50 p-3 text-sm text-sky-900">
+                  <p className="font-semibold mb-1 flex items-center gap-2"><Bot className="w-4 h-4" />Refinamiento comunitario activo</p>
+                  <p className="text-sky-800">Editable, con comentarios comunitarios habilitados y asistencia IA para mejorar estructura y claridad.</p>
+                </div>
+              )}
+
+              {officialStates.includes(proposal.state) && (
+                <div className="mb-4 rounded-lg border border-violet-200 bg-violet-50 p-3 text-sm text-violet-900">
+                  <p className="font-semibold mb-1">Flujo oficial institucional</p>
+                  <p className="text-violet-800">Propuesta bloqueada para edicion comunitaria. En etapa formal y con trazabilidad procedimental.</p>
+                </div>
+              )}
+
               {/* Action Button */}
-              {proposal.status === 'voting' && (
+              {proposal.state === 'open_for_voting' && (
                 <button
                   onClick={() => handleVote(proposal.id)}
-                  disabled={!votingEnabled}
+                  disabled={!votingEnabled || isCountdownFinished}
                   className={`w-full px-4 py-2 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 ${
-                    !votingEnabled
+                    !votingEnabled || isCountdownFinished
                       ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
                       : votedProposals.has(proposal.id)
                       ? 'bg-purple-600 text-white hover:bg-purple-700'
@@ -408,24 +527,43 @@ export default function Proposals({ proposals, currentPhase }: ProposalsProps) {
                     <Heart className={`w-4 h-4 ${votedProposals.has(proposal.id) ? 'fill-current' : ''}`} />
                   )}
                   {!votingEnabled
-                    ? 'Disponible solo en Vote Phase'
+                    ? 'Disponible solo en Voting'
+                    : isCountdownFinished
+                    ? 'Periodo de votacion finalizado'
                     : votedProposals.has(proposal.id)
                     ? 'Votado'
                     : 'Votar por este Proyecto'}
                 </button>
               )}
-              {proposal.status !== 'voting' && (
-                <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-                  Ver Detalles
-                </button>
-              )}
+                {communityStates.includes(proposal.state) && nextCommunityStep[proposal.state] && (
+                  <button
+                    onClick={() => onProposalStateChange(proposal.id, nextCommunityStep[proposal.state] as ProposalState)}
+                    className="w-full px-4 py-2 border border-sky-600 text-sky-700 rounded-lg hover:bg-sky-50 transition-colors font-medium flex items-center justify-center gap-2"
+                  >
+                    {proposal.state === 'in_preparation' ? 'Enviar oficialmente' : `Avanzar a ${stateLabel[nextCommunityStep[proposal.state] as ProposalState]}`}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+                {proposal.state === 'officially_submitted' && (
+                  <button
+                    onClick={() => onProposalStateChange(proposal.id, 'under_institutional_review')}
+                    className="w-full px-4 py-2 border border-violet-600 text-violet-700 rounded-lg hover:bg-violet-50 transition-colors font-medium"
+                  >
+                    Ingresar a revisión institucional
+                  </button>
+                )}
+                {!communityStates.includes(proposal.state) && proposal.state !== 'open_for_voting' && proposal.state !== 'officially_submitted' && (
+                  <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    Ver Detalles
+                  </button>
+                )}
             </div>
           </div>
         ))}
       </div>
 
       {/* Empty State */}
-      {filteredProposals.length === 0 && (
+      {proposalsForCurrentPhase.length === 0 && (
         <div className="text-center py-12">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="w-8 h-8 text-gray-400" />
