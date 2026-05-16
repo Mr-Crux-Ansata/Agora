@@ -26,81 +26,81 @@ interface Discussion {
 const mockDiscussions: Discussion[] = [
   {
     id: '1',
-    title: 'How will the new playground equipment accommodate children with disabilities?',
+    title: '¿Como se adaptaran los nuevos juegos para ninas y ninos con discapacidad?',
     author: 'Jennifer Walsh',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jennifer',
-    projectTitle: 'Community Park Renovation',
-    content: 'I love this proposal! However, I\'m wondering if the playground equipment will include accessible features for children with mobility challenges. This is important for our community.',
+    projectTitle: 'Renovacion del Parque Comunitario',
+    content: 'Me encanta esta propuesta. Sin embargo, quisiera saber si los juegos incluiran caracteristicas accesibles para ninas y ninos con movilidad reducida. Es importante para nuestra comunidad.',
     replies: 24,
     likes: 45,
     isPinned: true,
     createdAt: '2026-05-14',
-    tags: ['accessibility', 'playground']
+    tags: ['accesibilidad', 'juegos']
   },
   {
     id: '2',
-    title: 'Bike lane routing concerns near school zone',
+    title: 'Preocupacion por el trazo de ciclovia cerca de la zona escolar',
     author: 'Robert Chen',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Robert',
-    projectTitle: 'New Bike Lanes on Main Street',
-    content: 'The proposed bike lane goes right by Lincoln Elementary. Have we considered the safety implications during school drop-off and pick-up times?',
+    projectTitle: 'Nuevas Ciclovias en Avenida Principal',
+    content: 'La ciclovia propuesta pasa junto a una primaria. ¿Se consideraron los riesgos en horarios de entrada y salida escolar?',
     replies: 18,
     likes: 32,
     isPinned: false,
     createdAt: '2026-05-15',
-    tags: ['safety', 'schools']
+    tags: ['seguridad', 'escuelas']
   },
   {
     id: '3',
-    title: 'What types of vegetables will we be able to grow?',
+    title: '¿Que tipos de vegetales podremos cultivar?',
     author: 'Emma Green',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
-    projectTitle: 'Urban Garden Initiative',
-    content: 'I\'m excited about this project! Can someone share information about what crops would work best in our climate and soil conditions?',
+    projectTitle: 'Iniciativa de Huertos Urbanos',
+    content: 'Estoy muy emocionada con este proyecto. ¿Alguien puede compartir que cultivos funcionan mejor con nuestro clima y suelo?',
     replies: 42,
     likes: 67,
     isPinned: false,
     createdAt: '2026-05-13',
-    tags: ['gardening', 'sustainability']
+    tags: ['huertos', 'sostenibilidad']
   },
   {
     id: '4',
-    title: 'WiFi coverage and tech support availability',
+    title: 'Cobertura de WiFi y disponibilidad de soporte tecnico',
     author: 'Marcus Johnson',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus',
-    projectTitle: 'Public Library Technology Upgrade',
-    content: 'This is a great initiative! Will there be staff available to help seniors and others who aren\'t as tech-savvy? Also, what about WiFi coverage in all areas of the library?',
+    projectTitle: 'Actualizacion Tecnologica de Biblioteca Publica',
+    content: 'Es una gran iniciativa. ¿Habra personal para apoyar a personas mayores y a quienes tienen menos experiencia digital? Tambien, ¿habra cobertura WiFi en toda la biblioteca?',
     replies: 15,
     likes: 28,
     isPinned: true,
     createdAt: '2026-05-16',
-    tags: ['technology', 'accessibility']
+    tags: ['tecnologia', 'accesibilidad']
   },
   {
     id: '5',
-    title: 'Timeline for completion and maintenance plan',
+    title: 'Cronograma de finalizacion y plan de mantenimiento',
     author: 'Lisa Patel',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa',
-    projectTitle: 'Street Lighting Enhancement',
-    content: 'When is the expected completion date? Also, what\'s the long-term maintenance plan to ensure the lights stay functional?',
+    projectTitle: 'Mejora del Alumbrado Publico',
+    content: '¿Cual es la fecha estimada de finalizacion? Tambien, ¿cual sera el plan de mantenimiento a largo plazo para que las luminarias sigan funcionando?',
     replies: 9,
     likes: 19,
     isPinned: false,
     createdAt: '2026-05-15',
-    tags: ['timeline', 'maintenance']
+    tags: ['cronograma', 'mantenimiento']
   },
   {
     id: '6',
-    title: 'Parking concerns during construction',
+    title: 'Preocupaciones de estacionamiento durante la construccion',
     author: 'Tom Anderson',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tom',
-    projectTitle: 'Community Center Expansion',
-    content: 'I fully support this expansion, but I\'m worried about parking during the construction phase. The current lot is already limited. Any plans to address this?',
+    projectTitle: 'Ampliacion del Centro Comunitario',
+    content: 'Apoyo totalmente esta ampliacion, pero me preocupa el estacionamiento durante la obra. El espacio actual ya es limitado. ¿Hay algun plan para atenderlo?',
     replies: 31,
     likes: 54,
     isPinned: false,
     createdAt: '2026-05-12',
-    tags: ['parking', 'construction']
+    tags: ['estacionamiento', 'construccion']
   }
 ];
 
@@ -144,10 +144,10 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
 
-    if (diffInHours < 1) return 'less than 1 hour ago';
-    if (diffInHours < 24) return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+    if (diffInHours < 1) return 'hace menos de 1 hora';
+    if (diffInHours < 24) return `hace ${diffInHours} ${diffInHours === 1 ? 'hora' : 'horas'}`;
     const diffInDays = Math.floor(diffInHours / 24);
-    return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+    return `hace ${diffInDays} ${diffInDays === 1 ? 'dia' : 'dias'}`;
   };
 
   return (
@@ -158,7 +158,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
         <p className="app-subtle">Unete a la conversacion sobre proyectos de presupuesto publico</p>
         {!deliberationEnabled && (
           <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            La participacion en debates esta bloqueada en la fase actual. Debe estar activa la fase Community Deliberation.
+            La participacion en debates esta bloqueada en la fase actual. Debe estar activa la fase Deliberacion Comunitaria.
           </div>
         )}
       </div>
@@ -214,7 +214,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
           }`}
         >
           {deliberationEnabled ? <MessageCircle className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-          {deliberationEnabled ? 'Iniciar una Nueva Discusión' : 'Disponible solo en Community Deliberation'}
+          {deliberationEnabled ? 'Iniciar una Nueva Discusion' : 'Disponible solo en Deliberacion Comunitaria'}
         </button>
       </div>
 
@@ -294,7 +294,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
                   }`}
                 >
                   <MessageCircle className="w-5 h-5" />
-                  <span className="text-sm font-medium">{discussion.replies} replies</span>
+                  <span className="text-sm font-medium">{discussion.replies} respuestas</span>
                 </button>
               </div>
               <button
@@ -305,7 +305,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
                     : 'text-gray-400 bg-gray-100 cursor-not-allowed'
                 }`}
               >
-                {deliberationEnabled ? 'View Discussion' : 'Bloqueado en esta fase'}
+                {deliberationEnabled ? 'Ver discusion' : 'Bloqueado en esta fase'}
               </button>
             </div>
           </div>
@@ -328,7 +328,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
                 : 'bg-gray-100 text-gray-500 cursor-not-allowed'
             }`}
           >
-            {deliberationEnabled ? 'Iniciar la Primera Discusión' : 'Disponible solo en Deliberate Phase'}
+            {deliberationEnabled ? 'Iniciar la primera discusion' : 'Disponible solo en esta fase'}
           </button>
         </div>
       )}

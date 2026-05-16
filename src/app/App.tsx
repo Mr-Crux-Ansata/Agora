@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from './components/Layout';
 import Home from './components/Home';
 import MapView from './components/MapView';
@@ -9,6 +9,7 @@ import Discussions from './components/Discussions';
 import Impact from './components/Impact';
 import AuthScreen from './components/AuthScreen';
 import ProposalForumPage from './components/ProposalForumPage';
+import { apiClient } from './api';
 
 type Page = 'home' | 'map' | 'proposals' | 'voting' | 'results' | 'discussions' | 'impact' | 'proposal_forum';
 export type ParticipationPhase =
@@ -38,6 +39,7 @@ export type ProposalState =
 
 export interface Proposal {
   id: string;
+  cycleId?: string;
   title: string;
   description: string;
   author: string;
@@ -80,12 +82,12 @@ export interface DraftWorkspaceDraft {
 const initialProposals: Proposal[] = [
   {
     id: '1',
-    title: 'Community Park Renovation',
-    description: 'Renovate the local park with new playground equipment, walking paths, and green spaces for families to enjoy.',
+    title: 'Renovacion del Parque Comunitario',
+    description: 'Renovar el parque local con nuevos juegos infantiles, senderos y areas verdes para el disfrute de las familias.',
     author: 'Maria Santos',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Maria',
-    neighborhood: 'Downtown',
-    category: 'Parks & Recreation',
+    neighborhood: 'Centro',
+    category: 'Parques y Recreacion',
     budget: 150000,
     votes: 342,
     comments: 28,
@@ -97,12 +99,12 @@ const initialProposals: Proposal[] = [
   },
   {
     id: '2',
-    title: 'New Bike Lanes on Main Street',
-    description: 'Install protected bike lanes to improve cyclist safety and encourage sustainable transportation throughout downtown.',
+    title: 'Nuevas Ciclovias en Avenida Principal',
+    description: 'Instalar ciclovias protegidas para mejorar la seguridad de ciclistas y fomentar movilidad sostenible en el centro.',
     author: 'John Chen',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
-    neighborhood: 'Downtown',
-    category: 'Infrastructure',
+    neighborhood: 'Centro',
+    category: 'Infraestructura',
     budget: 250000,
     votes: 521,
     comments: 45,
@@ -114,12 +116,12 @@ const initialProposals: Proposal[] = [
   },
   {
     id: '3',
-    title: 'Urban Garden Initiative',
-    description: 'Create community gardens for local residents to grow vegetables and connect with neighbors.',
+    title: 'Iniciativa de Huertos Urbanos',
+    description: 'Crear huertos comunitarios para que residentes cultiven vegetales y fortalezcan la convivencia vecinal.',
     author: 'Ana Rodriguez',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ana',
-    neighborhood: 'South District',
-    category: 'Environment',
+    neighborhood: 'Distrito Sur',
+    category: 'Medio Ambiente',
     budget: 75000,
     votes: 287,
     comments: 34,
@@ -131,12 +133,12 @@ const initialProposals: Proposal[] = [
   },
   {
     id: '4',
-    title: 'Public Library Technology Upgrade',
-    description: 'Modernize the library with new computers, high-speed internet, and digital learning resources for all ages.',
+    title: 'Actualizacion Tecnologica de Biblioteca Publica',
+    description: 'Modernizar la biblioteca con nuevas computadoras, internet de alta velocidad y recursos digitales para todas las edades.',
     author: 'David Kim',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-    neighborhood: 'East Side',
-    category: 'Education',
+    neighborhood: 'Zona Este',
+    category: 'Educacion',
     budget: 200000,
     votes: 456,
     comments: 52,
@@ -148,12 +150,12 @@ const initialProposals: Proposal[] = [
   },
   {
     id: '5',
-    title: 'Street Lighting Enhancement',
-    description: 'Install energy-efficient LED street lights to improve safety and reduce energy costs.',
+    title: 'Mejora del Alumbrado Publico',
+    description: 'Instalar luminarias LED eficientes para mejorar la seguridad y reducir costos de energia.',
     author: 'Sofia Martinez',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sofia',
-    neighborhood: 'West End',
-    category: 'Infrastructure',
+    neighborhood: 'Zona Oeste',
+    category: 'Infraestructura',
     budget: 120000,
     votes: 198,
     comments: 16,
@@ -168,12 +170,12 @@ const initialProposals: Proposal[] = [
   },
   {
     id: '6',
-    title: 'Community Center Expansion',
-    description: 'Expand the local community center with new multipurpose rooms for classes, events, and community gatherings.',
+    title: 'Ampliacion del Centro Comunitario',
+    description: 'Ampliar el centro comunitario con salas multiproposito para clases, eventos y encuentros vecinales.',
     author: 'Michael Brown',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
-    neighborhood: 'North Hills',
-    category: 'Community',
+    neighborhood: 'Lomas Norte',
+    category: 'Comunidad',
     budget: 350000,
     votes: 612,
     comments: 78,
@@ -200,9 +202,34 @@ export default function App() {
   const [forumEntries, setForumEntries] = useState<Record<string, DraftForumEntry[]>>({});
   const [forumType, setForumType] = useState<Record<string, DraftForumType>>({});
   const [forumText, setForumText] = useState<Record<string, string>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
   const resultsEnabled = currentPhase === 'results_publication';
+  const proposalsEnabled = [
+    'proposal_submission',
+    'institutional_evaluation',
+    'community_deliberation',
+    'voting'
+  ].includes(currentPhase);
+
+  useEffect(() => {
+    const loadProposals = async () => {
+      try {
+        const rows = await apiClient.getProposals();
+        setProposals(rows);
+        setApiError(null);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'No se pudo cargar la API.';
+        setApiError(message);
+      }
+    };
+
+    loadProposals();
+  }, []);
 
   const navigateWithPhase = (page: Page) => {
+    if (page === 'proposals' && !proposalsEnabled) {
+      return;
+    }
     if (page === 'voting' && currentPhase !== 'voting') {
       return;
     }
@@ -362,6 +389,27 @@ export default function App() {
     return proposal.votes + proposal.comments + forumCount * 3;
   };
 
+  const castVote = async (proposalId: string) => {
+    const proposal = proposals.find((item) => item.id === proposalId);
+    if (!proposal?.cycleId) {
+      throw new Error('La propuesta no tiene cycleId para registrar voto.');
+    }
+
+    const voterId = localStorage.getItem('agoraVoterId');
+    if (!voterId) {
+      throw new Error('Falta agoraVoterId en localStorage para emitir voto.');
+    }
+
+    await apiClient.voteForProposal({
+      proposalId,
+      cycleId: proposal.cycleId,
+      voterId
+    });
+
+    const rows = await apiClient.getProposals();
+    setProposals(rows);
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
@@ -377,18 +425,39 @@ export default function App() {
       case 'map':
         return <MapView proposals={proposals} />;
       case 'proposals':
+        if (!proposalsEnabled) {
+          return (
+            <Home
+              proposals={proposals}
+              onNavigate={navigateWithPhase}
+              onCreateProposal={openCreateProposal}
+              currentPhase={currentPhase}
+              onSetPhase={setCurrentPhase}
+            />
+          );
+        }
         return (
-          <Proposals
-            proposals={proposals}
-            currentPhase={currentPhase}
-            onProposalStateChange={transitionProposalState}
-            onOpenProposalForum={openProposalForum}
-            getNeighborhoodInterest={getNeighborhoodInterest}
-            onOpenVotingSection={() => setCurrentPage('voting')}
-          />
+          <>
+            {apiError && (
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                  API no disponible ({apiError}). Se muestran datos locales.
+                </div>
+              </div>
+            )}
+            <Proposals
+              proposals={proposals}
+              currentPhase={currentPhase}
+              onProposalStateChange={transitionProposalState}
+              onOpenProposalForum={openProposalForum}
+              getNeighborhoodInterest={getNeighborhoodInterest}
+              onOpenVotingSection={() => setCurrentPage('voting')}
+              onOpenCreateProposal={openCreateProposal}
+            />
+          </>
         );
       case 'voting':
-        return <VotingSection proposals={proposals} currentPhase={currentPhase} />;
+        return <VotingSection proposals={proposals} currentPhase={currentPhase} onCastVote={castVote} />;
       case 'results':
         if (!resultsEnabled) {
           return (

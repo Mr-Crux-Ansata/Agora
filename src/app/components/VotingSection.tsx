@@ -5,13 +5,16 @@ import { ParticipationPhase, Proposal } from '../App';
 interface VotingSectionProps {
   proposals: Proposal[];
   currentPhase: ParticipationPhase;
+  onCastVote?: (proposalId: string) => Promise<void>;
 }
 
-export default function VotingSection({ proposals, currentPhase }: VotingSectionProps) {
+export default function VotingSection({ proposals, currentPhase, onCastVote }: VotingSectionProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [votedProposals, setVotedProposals] = useState<Set<string>>(new Set());
   const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
   const [showVoteConfirmation, setShowVoteConfirmation] = useState(false);
+  const [voteError, setVoteError] = useState<string | null>(null);
+  const [isSubmittingVote, setIsSubmittingVote] = useState(false);
   const [testVotingDeadline] = useState(() => Date.now() + 48 * 60 * 60 * 1000);
   const [now, setNow] = useState(Date.now());
 
@@ -51,17 +54,31 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
     setShowVoteConfirmation(true);
   };
 
-  const confirmVote = () => {
+  const confirmVote = async () => {
     if (!selectedProposal) return;
     if (!votingEnabled || isCountdownFinished) return;
 
-    setVotedProposals((prev) => {
-      if (prev.has(selectedProposal.id)) return prev;
-      const next = new Set(prev);
-      next.add(selectedProposal.id);
-      return next;
-    });
-    setShowVoteConfirmation(false);
+    setVoteError(null);
+    setIsSubmittingVote(true);
+
+    try {
+      if (onCastVote) {
+        await onCastVote(selectedProposal.id);
+      }
+
+      setVotedProposals((prev) => {
+        if (prev.has(selectedProposal.id)) return prev;
+        const next = new Set(prev);
+        next.add(selectedProposal.id);
+        return next;
+      });
+      setShowVoteConfirmation(false);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se pudo registrar el voto.';
+      setVoteError(message);
+    } finally {
+      setIsSubmittingVote(false);
+    }
   };
 
   if (!votingEnabled) {
@@ -69,8 +86,8 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 mb-2">Votacion deshabilitada</p>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">La seccion de votacion solo se habilita en la fase Voting</h1>
-          <p className="text-sm text-slate-700">Ahora mismo el sistema esta en otra fase. Cuando se active Voting, podras entrar a la cabina de votacion desde el menu.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">La seccion de votacion solo se habilita en la fase de Votacion</h1>
+          <p className="text-sm text-slate-700">Ahora mismo el sistema esta en otra fase. Cuando se active Votacion, podras entrar a la cabina de votacion desde el menu.</p>
         </div>
       </div>
     );
@@ -113,9 +130,15 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
         )}
       </div>
 
+      {voteError && (
+        <div className="mb-6 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+          {voteError}
+        </div>
+      )}
+
       {!votingEnabled && (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          La votacion esta bloqueada en la fase actual. Activa la fase Voting para habilitar esta cabina.
+          La votacion esta bloqueada en la fase actual. Activa la fase Votacion para habilitar esta cabina.
         </div>
       )}
 
@@ -246,7 +269,7 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
                   <Vote className="w-5 h-5" />
                 )}
                 {!votingEnabled
-                  ? 'Disponible solo en Voting'
+                  ? 'Disponible solo en Votacion'
                   : isCountdownFinished
                   ? 'Periodo de votacion finalizado'
                   : votedProposals.has(selectedProposal.id)
@@ -292,9 +315,10 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
               </button>
               <button
                 onClick={confirmVote}
+                disabled={isSubmittingVote}
                 className="flex-1 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
               >
-                Si, estoy seguro
+                {isSubmittingVote ? 'Registrando...' : 'Si, estoy seguro'}
               </button>
             </div>
           </div>

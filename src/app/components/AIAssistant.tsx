@@ -60,15 +60,30 @@ export default function AIAssistant() {
     setInputValue('');
     setIsTyping(true);
 
-    // Simulate AI response
+    // Simula respuesta de IA
     setTimeout(() => {
       let responseContent = mockResponses.default;
 
-      if (messageContent.toLowerCase().includes('proposal') || messageContent.toLowerCase().includes('write')) {
+      if (
+        messageContent.toLowerCase().includes('propuesta') ||
+        messageContent.toLowerCase().includes('escribir') ||
+        messageContent.toLowerCase().includes('proposal') ||
+        messageContent.toLowerCase().includes('write')
+      ) {
         responseContent = mockResponses.proposal;
-      } else if (messageContent.toLowerCase().includes('budget') || messageContent.toLowerCase().includes('guideline')) {
+      } else if (
+        messageContent.toLowerCase().includes('presupuesto') ||
+        messageContent.toLowerCase().includes('pauta') ||
+        messageContent.toLowerCase().includes('budget') ||
+        messageContent.toLowerCase().includes('guideline')
+      ) {
         responseContent = mockResponses.budget;
-      } else if (messageContent.toLowerCase().includes('voting') || messageContent.toLowerCase().includes('vote')) {
+      } else if (
+        messageContent.toLowerCase().includes('votacion') ||
+        messageContent.toLowerCase().includes('voto') ||
+        messageContent.toLowerCase().includes('voting') ||
+        messageContent.toLowerCase().includes('vote')
+      ) {
         responseContent = mockResponses.voting;
       }
 
@@ -85,7 +100,7 @@ export default function AIAssistant() {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
   };
 
   if (!isOpen) {

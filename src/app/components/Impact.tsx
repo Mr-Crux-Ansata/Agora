@@ -97,26 +97,26 @@ interface CompletedProjectExperience {
 }
 
 const categoryData = [
-  { name: 'Infrastructure', value: 8, color: '#3b82f6' },
-  { name: 'Parks', value: 12, color: '#10b981' },
-  { name: 'Education', value: 5, color: '#f59e0b' },
-  { name: 'Environment', value: 7, color: '#8b5cf6' },
-  { name: 'Health', value: 3, color: '#ec4899' }
+  { name: 'Infraestructura', value: 8, color: '#3b82f6' },
+  { name: 'Parques', value: 12, color: '#10b981' },
+  { name: 'Educacion', value: 5, color: '#f59e0b' },
+  { name: 'Medio Ambiente', value: 7, color: '#8b5cf6' },
+  { name: 'Salud', value: 3, color: '#ec4899' }
 ];
 
 const neighborhoodInvestment = [
-  { neighborhood: 'Downtown', investment: 450 },
-  { neighborhood: 'East Side', investment: 380 },
-  { neighborhood: 'West End', investment: 320 },
-  { neighborhood: 'North Hills', investment: 290 },
-  { neighborhood: 'South District', investment: 260 }
+  { neighborhood: 'Centro', investment: 450 },
+  { neighborhood: 'Zona Este', investment: 380 },
+  { neighborhood: 'Zona Oeste', investment: 320 },
+  { neighborhood: 'Lomas Norte', investment: 290 },
+  { neighborhood: 'Distrito Sur', investment: 260 }
 ];
 
 const timelineData = [
-  { month: 'Jan', projects: 2 },
+  { month: 'Ene', projects: 2 },
   { month: 'Feb', projects: 3 },
   { month: 'Mar', projects: 5 },
-  { month: 'Apr', projects: 4 },
+  { month: 'Abr', projects: 4 },
   { month: 'May', projects: 7 }
 ];
 

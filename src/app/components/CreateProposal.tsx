@@ -21,6 +21,7 @@ interface CreateProposalProps {
 
 export default function CreateProposal({ isOpen, onClose, onAddProposal }: CreateProposalProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [aiHint, setAiHint] = useState('');
   const [formData, setFormData] = useState({
     // Paso 1: Información Básica
     title: '',
@@ -102,6 +103,75 @@ export default function CreateProposal({ isOpen, onClose, onAddProposal }: Creat
 
   const updateFormData = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const aiText = (base: string, fallback: string) => (base.trim() ? base.trim() : fallback);
+
+  const buildAiDescription = () => {
+    const title = aiText(formData.title, 'proyecto comunitario');
+    const category = aiText(formData.category, 'infraestructura local');
+    const neighborhood = aiText(formData.neighborhood, 'el barrio');
+    return `La propuesta ${title} busca mejorar ${neighborhood} mediante acciones concretas en el eje de ${category}. Se plantea una intervencion escalable, de impacto directo y con enfoque de beneficio colectivo para fortalecer la calidad de vida del territorio.`;
+  };
+
+  const buildAiJustification = () => {
+    const neighborhood = aiText(formData.neighborhood, 'la zona');
+    return `Este proyecto es prioritario porque responde a necesidades actuales de ${neighborhood}, reduce brechas de acceso a servicios y mejora condiciones de seguridad, convivencia y bienestar. Su ejecucion contribuira a resultados medibles para la comunidad en el corto y mediano plazo.`;
+  };
+
+  const buildAiSolution = () => {
+    return `Se propone ejecutar el proyecto en etapas: 1) diagnostico y diseno tecnico, 2) implementacion de obras/acciones principales, 3) validacion comunitaria de resultados y 4) plan de mantenimiento con seguimiento vecinal e institucional.`;
+  };
+
+  const buildAiBudgetBreakdown = () => {
+    const total = parseInt(formData.estimatedBudget || '0', 10);
+    if (!total || total <= 0) {
+      return 'Define primero un presupuesto estimado para generar el desglose con IA.';
+    }
+
+    const materials = Math.round(total * 0.45);
+    const labor = Math.round(total * 0.35);
+    const management = Math.round(total * 0.1);
+    const contingency = Math.max(total - materials - labor - management, 0);
+
+    return [
+      `- Materiales e insumos: $${materials.toLocaleString('es-MX')}`,
+      `- Mano de obra y ejecucion: $${labor.toLocaleString('es-MX')}`,
+      `- Gestion, permisos y supervision: $${management.toLocaleString('es-MX')}`,
+      `- Contingencias: $${contingency.toLocaleString('es-MX')}`
+    ].join('\n');
+  };
+
+  const applyAiAssist = (action: 'description' | 'justification' | 'solution' | 'all_step2' | 'budget') => {
+    if (action === 'description') {
+      updateFormData('description', buildAiDescription());
+      setAiHint('IA: se genero una descripcion base para tu propuesta.');
+      return;
+    }
+
+    if (action === 'justification') {
+      updateFormData('justification', buildAiJustification());
+      setAiHint('IA: se genero una justificacion inicial.');
+      return;
+    }
+
+    if (action === 'solution') {
+      updateFormData('proposedSolution', buildAiSolution());
+      setAiHint('IA: se genero una solucion propuesta.');
+      return;
+    }
+
+    if (action === 'all_step2') {
+      updateFormData('description', buildAiDescription());
+      updateFormData('currentSituation', aiText(formData.currentSituation, 'Actualmente existe una brecha de cobertura y calidad en el territorio, con afectaciones directas en uso del espacio publico y acceso a servicios comunitarios.'));
+      updateFormData('justification', buildAiJustification());
+      updateFormData('proposedSolution', buildAiSolution());
+      setAiHint('IA: se completo el borrador integral del paso de descripcion.');
+      return;
+    }
+
+    updateFormData('budgetBreakdown', buildAiBudgetBreakdown());
+    setAiHint('IA: se genero un desglose presupuestario sugerido.');
   };
 
   const handleTargetPopulationToggle = (population: string) => {
@@ -328,6 +398,46 @@ export default function CreateProposal({ isOpen, onClose, onAddProposal }: Creat
           {/* Step 2: Descripción del Proyecto */}
           {currentStep === 2 && (
             <div className="space-y-6 max-w-2xl mx-auto">
+              <div className="rounded-xl border border-purple-200 bg-purple-50 p-4">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-purple-600 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-purple-900">Asistencia IA para redaccion</p>
+                    <p className="text-xs text-purple-700 mt-1">Genera o mejora textos del proyecto con un clic. Luego puedes editarlos manualmente.</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => applyAiAssist('description')}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-md bg-white border border-purple-300 text-purple-800 hover:bg-purple-100"
+                      >
+                        Redactar descripcion
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyAiAssist('justification')}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-md bg-white border border-purple-300 text-purple-800 hover:bg-purple-100"
+                      >
+                        Mejorar justificacion
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyAiAssist('solution')}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-md bg-white border border-purple-300 text-purple-800 hover:bg-purple-100"
+                      >
+                        Sugerir solucion
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyAiAssist('all_step2')}
+                        className="px-3 py-1.5 text-xs font-semibold rounded-md bg-purple-600 text-white hover:bg-purple-700"
+                      >
+                        Completar paso con IA
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
                   Descripción General del Proyecto *
@@ -460,6 +570,23 @@ export default function CreateProposal({ isOpen, onClose, onAddProposal }: Creat
           {/* Step 4: Presupuesto y Recursos */}
           {currentStep === 4 && (
             <div className="space-y-6 max-w-2xl mx-auto">
+              <div className="rounded-xl border border-purple-200 bg-purple-50 p-4">
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-purple-600 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-purple-900">Asistencia IA para presupuesto</p>
+                    <p className="text-xs text-purple-700 mt-1">Con base en el monto total, IA puede sugerir un desglose inicial para que lo ajustes.</p>
+                    <button
+                      type="button"
+                      onClick={() => applyAiAssist('budget')}
+                      className="mt-3 px-3 py-1.5 text-xs font-semibold rounded-md bg-purple-600 text-white hover:bg-purple-700"
+                    >
+                      Generar desglose con IA
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
                   Presupuesto Estimado (en pesos) *
@@ -836,6 +963,11 @@ export default function CreateProposal({ isOpen, onClose, onAddProposal }: Creat
             </button>
           )}
         </div>
+        {aiHint && (
+          <div className="px-4 sm:px-6 pb-4 text-xs text-purple-700 bg-purple-50 border-t border-purple-200">
+            {aiHint}
+          </div>
+        )}
       </div>
     </>
   );

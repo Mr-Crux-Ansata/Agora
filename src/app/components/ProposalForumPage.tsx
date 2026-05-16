@@ -92,6 +92,10 @@ export default function ProposalForumPage({
   const isStage2 = proposal.state === 'community_preview' || proposal.state === 'in_preparation';
   const isCommunityCollaboration = isStage1 || isStage2;
   const isLocked = !isCommunityCollaboration;
+  const isInstitutionalEvaluationPhase = currentPhase === 'institutional_evaluation';
+  const visibleStateLabel = isInstitutionalEvaluationPhase
+    ? 'En proceso de evaluacion'
+    : stateLabel[proposal.state] || proposal.state;
 
   const nextStepMap: Partial<Record<ProposalState, ProposalState>> = {
     draft: 'community_preview',
@@ -132,12 +136,19 @@ export default function ProposalForumPage({
               </span>
             </div>
           </div>
-          <div className="rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs text-violet-800">
-            Estado actual: <span className="font-semibold">{stateLabel[proposal.state] || proposal.state}</span>
+          <div
+            className={`rounded-xl px-3 py-2 text-xs ${
+              isInstitutionalEvaluationPhase
+                ? 'border border-amber-200 bg-amber-50 text-amber-800'
+                : 'border border-violet-200 bg-violet-50 text-violet-800'
+            }`}
+          >
+            Estado actual: <span className="font-semibold">{visibleStateLabel}</span>
           </div>
         </div>
       </div>
 
+      {currentPhase === 'proposal_submission' && (
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">Progresion de envio</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -182,6 +193,7 @@ export default function ProposalForumPage({
           </button>
         )}
       </div>
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
@@ -344,6 +356,7 @@ export default function ProposalForumPage({
         </div>
       )}
 
+      {currentPhase === 'proposal_submission' && (
       <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700">
         <p className="font-semibold mb-1">Flujo guiado de colaboracion</p>
         <p>
@@ -351,6 +364,7 @@ export default function ProposalForumPage({
           La discusion esta centralizada en esta pagina para mantener foco y reducir ruido en la lista principal.
         </p>
       </div>
+      )}
 
       <div className="h-2" />
       <div className="text-xs text-slate-500 inline-flex items-center gap-1">

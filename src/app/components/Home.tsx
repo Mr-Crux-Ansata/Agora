@@ -35,23 +35,23 @@ interface HomeProps {
 
 export default function Home({ proposals, onNavigate, onCreateProposal, currentPhase, onSetPhase }: HomeProps) {
   const phases: { id: ParticipationPhase; num: string; title: string; help: string; color: string; activeBg: string; activeBorder: string; activeText: string; icon: React.ReactNode }[] = [
-    { id: 'discovery',                   num: '1', title: 'Discovery + Tracking',   help: 'Explora necesidades y da seguimiento continuo a proyectos', color: 'from-blue-500 to-cyan-500',     activeBg: 'bg-blue-50',    activeBorder: 'border-blue-500',   activeText: 'text-blue-700',   icon: <Compass className="w-5 h-5" /> },
-    { id: 'proposal_submission',         num: '2', title: 'Proposal Submission',    help: 'Registro formal de propuestas ciudadanas',   color: 'from-violet-500 to-purple-600', activeBg: 'bg-violet-50',  activeBorder: 'border-violet-500', activeText: 'text-violet-700', icon: <PenLine className="w-5 h-5" /> },
-    { id: 'institutional_evaluation',    num: '3', title: 'Institutional Evaluation', help: 'Revision tecnica, legal y presupuestal',    color: 'from-amber-500 to-orange-500',  activeBg: 'bg-amber-50',   activeBorder: 'border-amber-500',  activeText: 'text-amber-700',  icon: <ClipboardCheck className="w-5 h-5" /> },
-    { id: 'community_deliberation',      num: '4', title: 'Community Deliberation', help: 'Debate publico y mejoras de propuestas',      color: 'from-teal-500 to-emerald-500',  activeBg: 'bg-teal-50',    activeBorder: 'border-teal-500',   activeText: 'text-teal-700',   icon: <MessageSquare className="w-5 h-5" /> },
-    { id: 'voting',                      num: '5', title: 'Voting',                 help: 'Votacion abierta con reglas de elegibilidad', color: 'from-pink-500 to-rose-500',     activeBg: 'bg-pink-50',    activeBorder: 'border-pink-500',   activeText: 'text-pink-700',   icon: <CheckSquare className="w-5 h-5" /> },
-    { id: 'results_publication',         num: '6', title: 'Results Publication',    help: 'Publicacion de resultados y dictamen',       color: 'from-indigo-500 to-violet-600', activeBg: 'bg-indigo-50',  activeBorder: 'border-indigo-500',  activeText: 'text-indigo-700', icon: <Check className="w-5 h-5" /> }
+    { id: 'discovery',                   num: '1', title: 'Descubrimiento + Seguimiento',   help: 'Explora necesidades y da seguimiento continuo a proyectos', color: 'from-blue-500 to-cyan-500',     activeBg: 'bg-blue-50',    activeBorder: 'border-blue-500',   activeText: 'text-blue-700',   icon: <Compass className="w-5 h-5" /> },
+    { id: 'proposal_submission',         num: '2', title: 'Presentacion de Propuestas',    help: 'Registro formal de propuestas ciudadanas',   color: 'from-violet-500 to-purple-600', activeBg: 'bg-violet-50',  activeBorder: 'border-violet-500', activeText: 'text-violet-700', icon: <PenLine className="w-5 h-5" /> },
+    { id: 'institutional_evaluation',    num: '3', title: 'Evaluacion Institucional', help: 'Revision tecnica, legal y presupuestal',    color: 'from-amber-500 to-orange-500',  activeBg: 'bg-amber-50',   activeBorder: 'border-amber-500',  activeText: 'text-amber-700',  icon: <ClipboardCheck className="w-5 h-5" /> },
+    { id: 'community_deliberation',      num: '4', title: 'Deliberacion Comunitaria', help: 'Debate publico y mejoras de propuestas',      color: 'from-teal-500 to-emerald-500',  activeBg: 'bg-teal-50',    activeBorder: 'border-teal-500',   activeText: 'text-teal-700',   icon: <MessageSquare className="w-5 h-5" /> },
+    { id: 'voting',                      num: '5', title: 'Votacion',                 help: 'Votacion abierta con reglas de elegibilidad', color: 'from-pink-500 to-rose-500',     activeBg: 'bg-pink-50',    activeBorder: 'border-pink-500',   activeText: 'text-pink-700',   icon: <CheckSquare className="w-5 h-5" /> },
+    { id: 'results_publication',         num: '6', title: 'Publicacion de Resultados',    help: 'Publicacion de resultados y dictamen',       color: 'from-indigo-500 to-violet-600', activeBg: 'bg-indigo-50',  activeBorder: 'border-indigo-500',  activeText: 'text-indigo-700', icon: <Check className="w-5 h-5" /> }
   ];
 
   const activePhase = phases.find(p => p.id === currentPhase)!;
 
   const phaseLabel: Record<ParticipationPhase, string> = {
-    discovery: 'Discovery + Tracking',
-    proposal_submission: 'Proposal Submission',
-    institutional_evaluation: 'Institutional Evaluation',
-    community_deliberation: 'Community Deliberation',
-    voting: 'Voting',
-    results_publication: 'Results Publication'
+    discovery: 'Descubrimiento + Seguimiento',
+    proposal_submission: 'Presentacion de Propuestas',
+    institutional_evaluation: 'Evaluacion Institucional',
+    community_deliberation: 'Deliberacion Comunitaria',
+    voting: 'Votacion',
+    results_publication: 'Publicacion de Resultados'
   };
 
   const canCreateProposal = currentPhase === 'proposal_submission';
@@ -101,7 +101,7 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
       headerBg: 'bg-indigo-600',
       decoration: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 60%)',
       enabled: canCreateProposal,
-      lockedMsg: 'Proposal Submission',
+      lockedMsg: 'Presentacion de Propuestas',
       onClick: onCreateProposal
     },
     {
@@ -112,7 +112,7 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
       headerBg: 'bg-emerald-600',
       decoration: 'radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 60%)',
       enabled: canDeliberate,
-      lockedMsg: 'Community Deliberation',
+      lockedMsg: 'Deliberacion Comunitaria',
       onClick: () => onNavigate('discussions')
     },
     {
@@ -123,7 +123,7 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
       headerBg: 'bg-orange-500',
       decoration: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
       enabled: canVote,
-      lockedMsg: 'Voting',
+      lockedMsg: 'Votacion',
       onClick: () => onNavigate('voting')
     },
     {
@@ -138,6 +138,8 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
       onClick: () => onNavigate('results')
     }
   ];
+
+  const visibleActionCards = actionCards.filter((card) => card.key !== 'vote' || canVote);
 
   return (
     <div className="min-h-screen bg-transparent">
@@ -261,7 +263,7 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            {actionCards.map((card) => (
+            {visibleActionCards.map((card) => (
               <button
                 key={card.key}
                 onClick={card.enabled ? card.onClick : undefined}

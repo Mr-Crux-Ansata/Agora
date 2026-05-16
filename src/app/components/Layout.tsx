@@ -37,14 +37,24 @@ export default function Layout({ children, currentPage, currentPhase, resultsEna
   const [notificationCount] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const proposalsEnabled = [
+    'proposal_submission',
+    'institutional_evaluation',
+    'community_deliberation',
+    'voting'
+  ].includes(currentPhase);
 
-  const navigation = [
+  const baseNavigation = [
     { name: 'Inicio', page: 'home' as Page, icon: Home },
     { name: 'Mapa', page: 'map' as Page, icon: Map },
     { name: 'Propuestas', page: 'proposals' as Page, icon: PenLine },
     { name: 'Discusiones', page: 'discussions' as Page, icon: MessageSquare },
     { name: 'Impacto', page: 'impact' as Page, icon: TrendingUp },
   ];
+
+  const navigation = proposalsEnabled
+    ? baseNavigation
+    : baseNavigation.filter((item) => item.page !== 'proposals');
 
   const votingNavigation = currentPhase === 'voting'
     ? [{ name: 'Votacion', page: 'voting' as Page, icon: Vote }]
