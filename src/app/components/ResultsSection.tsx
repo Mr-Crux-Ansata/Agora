@@ -32,7 +32,7 @@ export default function ResultsSection({ proposals }: ResultsSectionProps) {
             <Search className="w-8 h-8 text-slate-400" />
           </div>
           <h3 className="text-lg font-semibold text-slate-900 mb-2">Aun no hay proyectos ganadores</h3>
-          <p className="text-slate-600">Cuando se definan ganadores en votacion, apareceran aqui.</p>
+          <p className="text-slate-600">Cuando se definan ganadores en votación, aparecerán aquí.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -59,10 +59,10 @@ export default function ResultsSection({ proposals }: ResultsSectionProps) {
                   <p className="inline-flex items-center gap-2"><Clock3 className="w-4 h-4 text-gray-500" />Estado actual: {proposal.state}</p>
                 </div>
 
-                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900 inline-flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Proyecto ganador validado por votacion ciudadana.
-                </div>
+                 <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900 inline-flex items-center gap-2">
+                   <CheckCircle2 className="w-4 h-4" />
+                   Proyecto ganador validado por votación ciudadana.
+                 </div>
               </div>
             </div>
           ))}

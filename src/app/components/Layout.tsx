@@ -46,9 +46,9 @@ export default function Layout({ children, currentPage, currentPhase, resultsEna
     { name: 'Impacto', page: 'impact' as Page, icon: TrendingUp },
   ];
 
-  const votingNavigation = currentPhase === 'voting'
-    ? [{ name: 'Votacion', page: 'voting' as Page, icon: Vote }]
-    : [];
+   const votingNavigation = currentPhase === 'voting'
+     ? [{ name: 'Votación', page: 'voting' as Page, icon: Vote }]
+     : [];
 
   const resultsNavigation = resultsEnabled
     ? [{ name: 'Resultados', page: 'results' as Page, icon: Sparkles }]
@@ -72,7 +72,7 @@ export default function Layout({ children, currentPage, currentPhase, resultsEna
               <div className="w-10 h-10 brand-accent rounded-xl flex items-center justify-center shadow-md shadow-fuchsia-300/40">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-semibold text-gray-900 tracking-tight">PresupuestoCivico</span>
+              <span className="text-xl font-semibold text-gray-900 tracking-tight">Agora</span>
             </button>
 
             {/* Desktop Navigation */}

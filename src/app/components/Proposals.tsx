@@ -60,7 +60,7 @@ export default function Proposals({ proposals, currentPhase, onProposalStateChan
 
   const rejectionReasonLabel: Record<NonNullable<Proposal['rejectionReason']>, string> = {
     exceeds_budget_limit: 'Exceeds budget limit',
-    outside_jurisdiction: 'Outside institutional jurisdiction',
+     outside_jurisdiction: 'Fuera de la jurisdicción institucional',
     technical_infeasibility: 'Technical infeasibility',
     duplicate_proposal: 'Duplicate proposal'
   };
@@ -381,7 +381,7 @@ export default function Proposals({ proposals, currentPhase, onProposalStateChan
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">Foro centralizado de propuesta</p>
-                    <p className="text-xs text-slate-600 mt-1">Cada tarjeta abre una pagina exclusiva para edicion y discusion de esta propuesta.</p>
+                    <p className="text-xs text-slate-600 mt-1">Cada tarjeta abre una página exclusiva para edición y discusión de esta propuesta.</p>
                     <p className="text-xs text-slate-500 mt-2">Interes barrial: {getNeighborhoodInterest(proposal.id)}</p>
                   </div>
                   <button
@@ -396,14 +396,14 @@ export default function Proposals({ proposals, currentPhase, onProposalStateChan
 
               {/* Action Button */}
               <div className="space-y-2">
-                {proposal.state === 'open_for_voting' && (
-                  <button
-                    onClick={onOpenVotingSection}
-                    className="w-full px-4 py-2 border border-rose-600 text-rose-700 rounded-lg hover:bg-rose-50 transition-colors font-medium"
-                  >
-                    Ir a seccion de votacion
-                  </button>
-                )}
+                 {proposal.state === 'open_for_voting' && (
+                   <button
+                     onClick={onOpenVotingSection}
+                     className="w-full px-4 py-2 border border-rose-600 text-rose-700 rounded-lg hover:bg-rose-50 transition-colors font-medium"
+                   >
+                     Ir a sección de votación
+                   </button>
+                 )}
                 {communityStates.includes(proposal.state) && nextCommunityStep[proposal.state] && (
                   <button
                     onClick={() => onProposalStateChange(proposal.id, nextCommunityStep[proposal.state] as ProposalState)}

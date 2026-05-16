@@ -221,22 +221,22 @@ const archivedCompletedProjects: CompletedProjectExperience[] = [
     district: 'Distrito 4',
     coordinates: { x: 35, y: 62, lat: '19.4012', lng: '-99.1550' },
     timeline: [
-      { key: 'proposal_creation', label: 'Creacion de propuesta', date: '2025-01-05', status: 'done' },
-      { key: 'institutional_evaluation', label: 'Evaluacion institucional', date: '2025-01-28', status: 'done' },
-      { key: 'deliberation', label: 'Deliberacion comunitaria', date: '2025-02-14', status: 'done' },
-      { key: 'voting', label: 'Votacion ciudadana', date: '2025-03-04', status: 'done' },
-      { key: 'approval', label: 'Aprobacion final', date: '2025-03-11', status: 'done' },
+      { key: 'proposal_creation', label: 'Creación de propuesta', date: '2025-01-05', status: 'done' },
+      { key: 'institutional_evaluation', label: 'Evaluación institucional', date: '2025-01-28', status: 'done' },
+      { key: 'deliberation', label: 'Deliberación comunitaria', date: '2025-02-14', status: 'done' },
+      { key: 'voting', label: 'Votación ciudadana', date: '2025-03-04', status: 'done' },
+      { key: 'approval', label: 'Aprobación final', date: '2025-03-11', status: 'done' },
       { key: 'construction_start', label: 'Inicio de obra', date: '2025-04-03', status: 'done' },
       { key: 'milestone_1', label: 'Hito 1: conectividad peatonal', date: '2025-05-20', status: 'done' },
-      { key: 'milestone_2', label: 'Hito 2: arborizacion lineal', date: '2025-07-22', status: 'done' },
+      { key: 'milestone_2', label: 'Hito 2: arborización lineal', date: '2025-07-22', status: 'done' },
       { key: 'project_completion', label: 'Cierre de proyecto', date: '2025-09-30', status: 'done' }
     ],
     visualEvidence: {
       beforePhoto: 'https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=1200&auto=format&fit=crop',
       duringPhoto: 'https://images.unsplash.com/photo-1462392246754-28dfa2df8e6b?w=1200&auto=format&fit=crop',
       afterPhoto: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&auto=format&fit=crop',
-      videos: ['Evolucion mensual de senderos', 'Testimonios de movilidad barrial'],
-      publicDocs: ['Monitoreo de vegetacion', 'Panel comparativo antes-despues'],
+      videos: ['Evolución mensual de senderos', 'Testimonios de movilidad barrial'],
+      publicDocs: ['Monitoreo de vegetación', 'Panel comparativo antes-después'],
       gallery: [
         'https://images.unsplash.com/photo-1432679963831-2dab49187847?w=900&auto=format&fit=crop',
         'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&auto=format&fit=crop',
@@ -249,22 +249,22 @@ const archivedCompletedProjects: CompletedProjectExperience[] = [
       rehabilitatedAreas: 3100,
       treesPlanted: 167,
       infrastructureInstalled: 88,
-      environmentalImprovements: 'Corredor de infiltracion pluvial y reduccion de escorrentia.',
+      environmentalImprovements: 'Corredor de infiltración pluvial y reducción de escorrentía.',
       accessibilityImprovements: 'Senderos con pendiente accesible y descansos cada 120 metros.'
     },
     budget: {
       approved: 2950000,
       executed: 2864000,
       indicators: [
-        { label: 'Ejecucion presupuestal', value: '97.1%', status: 'ok' },
-        { label: 'Auditoria tecnica', value: 'Sin hallazgos criticos', status: 'ok' },
+        { label: 'Ejecución presupuestal', value: '97.1%', status: 'ok' },
+        { label: 'Auditoria técnica', value: 'Sin hallazgos críticos', status: 'ok' },
         { label: 'Transparencia de compras', value: 'Publicada', status: 'ok' }
       ]
     },
     institutionalEvidence: {
-      reports: ['Informe final de movilidad activa', 'Evaluacion social post-obra'],
-      contracts: ['Contrato SRV-104-2025', 'Anexos de supervison externa'],
-      audits: ['Revision financiera Q4 2025'],
+      reports: ['Informe final de movilidad activa', 'Evaluación social post-obra'],
+      contracts: ['Contrato SRV-104-2025', 'Anexos de supervisión externa'],
+      audits: ['Revisión financiera Q4 2025'],
       technicalDocs: ['Inventario de especies plantadas', 'Plan de mantenimiento anual'],
       publicExecutionEvidence: ['Acta comunitaria de conformidad', 'Mapa de tramos intervenidos']
     },
@@ -281,7 +281,7 @@ const archivedCompletedProjects: CompletedProjectExperience[] = [
         type: 'update',
         author: 'Brigada Verde Sur',
         date: '2026-01-20',
-        text: 'Se activo una jornada de reforestacion adicional en el tramo oriente.',
+        text: 'Se activó una jornada de reforestación adicional en el tramo oriente.',
         status: 'Publicado'
       }
     ]
@@ -481,29 +481,29 @@ export default function Impact({ proposals }: ImpactProps) {
         id: `proposal-${proposal.id}`,
         proposalId: proposal.id,
         title: proposal.title,
-        finalStatus: 'Completado con evidencia publica',
+        finalStatus: 'Completado con evidencia pública',
         completionDate: proposal.createdAt,
         executionDuration: `${5 + index} meses`,
         neighborhood: proposal.neighborhood,
         district: `Distrito ${index + 2}`,
         coordinates: { x: 42 + index * 8, y: 40 + index * 7, lat: '19.4300', lng: '-99.1350' },
         timeline: [
-          { key: 'proposal_creation', label: 'Creacion de propuesta', date: proposal.createdAt, status: 'done' },
-          { key: 'institutional_evaluation', label: 'Evaluacion institucional', date: '2026-01-28', status: 'done' },
-          { key: 'deliberation', label: 'Deliberacion comunitaria', date: '2026-02-14', status: 'done' },
-          { key: 'voting', label: 'Votacion ciudadana', date: '2026-03-02', status: 'done' },
-          { key: 'approval', label: 'Aprobacion final', date: '2026-03-10', status: 'done' },
+          { key: 'proposal_creation', label: 'Creación de propuesta', date: proposal.createdAt, status: 'done' },
+          { key: 'institutional_evaluation', label: 'Evaluación institucional', date: '2026-01-28', status: 'done' },
+          { key: 'deliberation', label: 'Deliberación comunitaria', date: '2026-02-14', status: 'done' },
+          { key: 'voting', label: 'Votación ciudadana', date: '2026-03-02', status: 'done' },
+          { key: 'approval', label: 'Aprobación final', date: '2026-03-10', status: 'done' },
           { key: 'construction_start', label: 'Inicio de obra', date: '2026-03-28', status: 'done' },
           { key: 'milestone_1', label: 'Hito 1: avance de obra', date: '2026-05-12', status: 'done' },
-          { key: 'milestone_2', label: 'Hito 2: verificacion tecnica', date: '2026-06-24', status: 'done' },
+          { key: 'milestone_2', label: 'Hito 2: verificación técnica', date: '2026-06-24', status: 'done' },
           { key: 'project_completion', label: 'Cierre de proyecto', date: '2026-07-30', status: 'done' }
         ],
         visualEvidence: {
           beforePhoto: proposal.image,
           duringPhoto: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&auto=format&fit=crop',
           afterPhoto: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&auto=format&fit=crop',
-          videos: ['Capsula de avance trimestral', 'Registro de recepcion vecinal'],
-          publicDocs: ['Panel antes-despues', 'Repositorio fotografico de avance'],
+          videos: ['Cápsula de avance trimestral', 'Registro de recepción vecinal'],
+          publicDocs: ['Panel antes-después', 'Repositorio fotográfico de avance'],
           gallery: [
             proposal.image,
             'https://images.unsplash.com/photo-1521133573892-e44906baee46?w=900&auto=format&fit=crop',
@@ -516,24 +516,24 @@ export default function Impact({ proposals }: ImpactProps) {
           rehabilitatedAreas: 1200 + index * 280,
           treesPlanted: 20 + index * 7,
           infrastructureInstalled: 35 + index * 5,
-          environmentalImprovements: 'Mejoras en vegetacion urbana y confort termico del espacio publico.',
-          accessibilityImprovements: 'Rutas accesibles, señalizacion y cruces con enfoque peatonal.'
+          environmentalImprovements: 'Mejoras en vegetación urbana y confort térmico del espacio publico.',
+          accessibilityImprovements: 'Rutas accesibles, señalización y cruces con enfoque peatonal.'
         },
         budget: {
           approved: proposal.budget,
           executed,
           indicators: [
             { label: 'Transparencia documental', value: 'Alta', status: 'ok' },
-            { label: 'Ejecucion presupuestal', value: `${((executed / proposal.budget) * 100).toFixed(1)}%`, status: 'ok' },
-            { label: 'Revision ciudadana', value: 'Activa', status: 'warning' }
+            { label: 'Ejecución presupuestal', value: `${((executed / proposal.budget) * 100).toFixed(1)}%`, status: 'ok' },
+            { label: 'Revisión ciudadana', value: 'Activa', status: 'warning' }
           ]
         },
         institutionalEvidence: {
           reports: ['Reporte de cierre institucional', 'Reporte de impacto social post-entrega'],
-          contracts: ['Contrato principal de ejecucion', 'Anexo de supervision'],
+          contracts: ['Contrato principal de ejecución', 'Anexo de supervision'],
           audits: ['Auditoria de cumplimiento'],
-          technicalDocs: ['Memoria tecnica', 'Lista de verificacion de calidad'],
-          publicExecutionEvidence: ['Acta de recepcion vecinal', 'Evidencia georreferenciada']
+          technicalDocs: ['Memoria técnica', 'Lista de verificación de calidad'],
+          publicExecutionEvidence: ['Acta de recepción vecinal', 'Evidencia georreferenciada']
         },
         citizenParticipation: {
           totalVotes: proposal.votes,
@@ -652,10 +652,10 @@ export default function Impact({ proposals }: ImpactProps) {
     const nextItem = {
       id: `local-${Date.now()}`,
       type,
-      author: 'Ciudadania',
+      author: 'Ciudadanía',
       date: new Date().toISOString().slice(0, 10),
       text: sourceText.trim(),
-      status: type === 'issue' ? 'En revision municipal' : 'Publicado'
+      status: type === 'issue' ? 'En revisión municipal' : 'Publicado'
     };
 
     setCommunityPosts((prev) => [nextItem, ...prev]);
@@ -679,8 +679,8 @@ export default function Impact({ proposals }: ImpactProps) {
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(8);
       doc.setTextColor(100, 116, 139);
-      doc.text('Documento generado automaticamente para fines de transparencia publica.', left, pageHeight - 8);
-      doc.text(`Pagina ${pageNumber}`, right - 18, pageHeight - 8);
+      doc.text('Documento generado automáticamente para fines de transparencia pública.', left, pageHeight - 8);
+      doc.text(`Página ${pageNumber}`, right - 18, pageHeight - 8);
     };
 
     const drawHeader = (isFirstPage: boolean) => {
@@ -694,12 +694,12 @@ export default function Impact({ proposals }: ImpactProps) {
         doc.setTextColor(255, 255, 255);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(16);
-        doc.text('Expediente Publico de Proyecto Completado', left, 15);
+        doc.text('Expediente Público de Proyecto Completado', left, 15);
 
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.text('Plataforma de Presupuesto Participativo', left, 22);
-        doc.text(`Fecha de emision: ${new Date().toLocaleDateString('es-MX')}`, left, 28);
+        doc.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-MX')}`, left, 28);
         doc.text('Reporte ciudadano de transparencia y seguimiento', left, 34);
 
         y = 48;
@@ -796,7 +796,7 @@ export default function Impact({ proposals }: ImpactProps) {
       const cards = [
         { label: 'Personas beneficiadas', value: project.impactMetrics.peopleBenefited.toLocaleString() },
         { label: 'Presupuesto ejecutado', value: formatCurrency(project.budget.executed) },
-        { label: 'Participacion total', value: project.citizenParticipation.totalVotes.toLocaleString() }
+        { label: 'Participación total', value: project.citizenParticipation.totalVotes.toLocaleString() }
       ];
 
       cards.forEach((card, idx) => {
@@ -845,8 +845,8 @@ export default function Impact({ proposals }: ImpactProps) {
     addSectionTitle('Ficha General');
     addKeyValueRow('Proyecto', project.title);
     addKeyValueRow('Estado final', project.finalStatus, true);
-    addKeyValueRow('Fecha de finalizacion', toLabelDate(project.completionDate));
-    addKeyValueRow('Duracion de ejecucion', project.executionDuration);
+    addKeyValueRow('Fecha de finalización', toLabelDate(project.completionDate));
+    addKeyValueRow('Duración de ejecución', project.executionDuration);
     addKeyValueRow('Territorio', `${project.neighborhood}, ${project.district}`);
 
     addKpiCardRow();
@@ -857,10 +857,10 @@ export default function Impact({ proposals }: ImpactProps) {
     addKeyValueRow('Porcentaje usado', `${((project.budget.executed / project.budget.approved) * 100).toFixed(1)}%`);
     addBulletList(project.budget.indicators.map((item) => `${item.label}: ${item.value}`));
 
-    addSectionTitle('Impacto y Participacion');
+    addSectionTitle('Impacto y Participación');
     addKeyValueRow('Personas beneficiadas', project.impactMetrics.peopleBenefited.toLocaleString());
-    addKeyValueRow('Areas rehabilitadas', `${project.impactMetrics.rehabilitatedAreas.toLocaleString()} m2`);
-    addKeyValueRow('Arboles plantados', project.impactMetrics.treesPlanted.toString());
+    addKeyValueRow('Áreas rehabilitadas', `${project.impactMetrics.rehabilitatedAreas.toLocaleString()} m2`);
+    addKeyValueRow('Árboles plantados', project.impactMetrics.treesPlanted.toString());
     addKeyValueRow('Infraestructura instalada', project.impactMetrics.infrastructureInstalled.toString());
     addKeyValueRow('Mejoras ambientales', project.impactMetrics.environmentalImprovements);
     addKeyValueRow('Mejoras de accesibilidad', project.impactMetrics.accessibilityImprovements);
@@ -868,7 +868,7 @@ export default function Impact({ proposals }: ImpactProps) {
     addKeyValueRow('Comentarios', project.citizenParticipation.comments.toString());
     addKeyValueRow('Engagement', project.citizenParticipation.engagementRate);
 
-    addSectionTitle('Linea de Tiempo Democratica');
+    addSectionTitle('Linea de Tiempo Democrática');
     addTimelineRows();
 
     addSectionTitle('Evidencia Institucional');
@@ -1027,9 +1027,9 @@ export default function Impact({ proposals }: ImpactProps) {
           <div className="surface-card rounded-xl p-4 md:p-6 mb-6">
             <div className="flex flex-col lg:flex-row gap-4 lg:items-center lg:justify-between">
               <div>
-                <h2 className="app-heading-lg">Expediente Publico de Proyecto Completado</h2>
+                <h2 className="app-heading-lg">Expediente Público de Proyecto Completado</h2>
                 <p className="text-sm text-slate-600 mt-1">
-                  Evidencia territorial, trazabilidad democratica e impacto comunitario verificable.
+                  Evidencia territorial, trazabilidad democrática e impacto comunitario verificable.
                 </p>
               </div>
               <span className="text-xs px-2.5 py-1 rounded-full bg-fuchsia-100 border border-fuchsia-200 text-fuchsia-700">
@@ -1115,7 +1115,7 @@ export default function Impact({ proposals }: ImpactProps) {
 
           {filteredCompletedExperiences.length === 0 && (
             <div className="surface-card rounded-xl p-8 text-center text-slate-600">
-              Aun no hay proyectos completados para construir el expediente publico.
+              Aún no hay proyectos completados para construir el expediente público.
             </div>
           )}
 
@@ -1168,7 +1168,7 @@ export default function Impact({ proposals }: ImpactProps) {
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4 mb-4">
                     <div>
                       <h3 className="text-xl font-semibold text-slate-900">{selectedExperience.title}</h3>
-                      <p className="text-sm text-slate-600 mt-1">Proyecto completado como evidencia publica de transformacion territorial.</p>
+                      <p className="text-sm text-slate-600 mt-1">Proyecto completado como evidencia pública de transformación territorial.</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -1192,11 +1192,11 @@ export default function Impact({ proposals }: ImpactProps) {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
-                      <p className="text-xs text-slate-500 mb-1">Fecha de finalizacion</p>
+                      <p className="text-xs text-slate-500 mb-1">Fecha de finalización</p>
                       <p className="text-sm font-semibold text-slate-900">{toLabelDate(selectedExperience.completionDate)}</p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
-                      <p className="text-xs text-slate-500 mb-1">Duracion de ejecucion</p>
+                      <p className="text-xs text-slate-500 mb-1">Duración de ejecución</p>
                       <p className="text-sm font-semibold text-slate-900">{selectedExperience.executionDuration}</p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
@@ -1226,7 +1226,7 @@ export default function Impact({ proposals }: ImpactProps) {
                 </div>
 
                 <div className="surface-card rounded-xl p-5 md:p-6">
-                  <h4 className="text-base font-semibold text-slate-900 mb-4">Linea de tiempo del ciclo democratico</h4>
+                  <h4 className="text-base font-semibold text-slate-900 mb-4">Línea de tiempo del ciclo democrático</h4>
                   <div className="space-y-3">
                     {selectedExperience.timeline.map((step, idx) => (
                       <div key={step.key} className="flex items-start gap-3">
@@ -1244,7 +1244,7 @@ export default function Impact({ proposals }: ImpactProps) {
                 </div>
 
                 <div className="surface-card rounded-xl p-5 md:p-6">
-                  <h4 className="text-base font-semibold text-slate-900 mb-4">Evidencia visual publica</h4>
+                  <h4 className="text-base font-semibold text-slate-900 mb-4">Evidencia visual pública</h4>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                     <div>
@@ -1256,8 +1256,8 @@ export default function Impact({ proposals }: ImpactProps) {
                       <img src={selectedExperience.visualEvidence.duringPhoto} alt={`Durante ${selectedExperience.title}`} className="h-40 w-full object-cover rounded-lg border border-slate-200" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-600 mb-2">Despues</p>
-                      <img src={selectedExperience.visualEvidence.afterPhoto} alt={`Despues de ${selectedExperience.title}`} className="h-40 w-full object-cover rounded-lg border border-slate-200" />
+                      <p className="text-xs font-semibold text-slate-600 mb-2">Después</p>
+                      <img src={selectedExperience.visualEvidence.afterPhoto} alt={`Después de ${selectedExperience.title}`} className="h-40 w-full object-cover rounded-lg border border-slate-200" />
                     </div>
                   </div>
 
@@ -1271,7 +1271,7 @@ export default function Impact({ proposals }: ImpactProps) {
                       </ul>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3">
-                      <p className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-indigo-600" />Documentacion visual publica</p>
+                      <p className="text-sm font-semibold text-slate-900 mb-2 flex items-center gap-2"><FileText className="w-4 h-4 text-indigo-600" />Documentación visual pública</p>
                       <ul className="space-y-1 text-sm text-slate-700">
                         {selectedExperience.visualEvidence.publicDocs.map((item) => (
                           <li key={item}>• {item}</li>
@@ -1280,7 +1280,7 @@ export default function Impact({ proposals }: ImpactProps) {
                     </div>
                   </div>
 
-                  <p className="text-sm font-semibold text-slate-900 mb-2">Galeria de progreso</p>
+                  <p className="text-sm font-semibold text-slate-900 mb-2">Galería de progreso</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {selectedExperience.visualEvidence.gallery.map((photo, idx) => (
                       <img key={photo + idx} src={photo} alt={`Galeria ${idx + 1}`} className="h-24 w-full object-cover rounded-lg border border-slate-200" />
@@ -1289,18 +1289,18 @@ export default function Impact({ proposals }: ImpactProps) {
                 </div>
 
                 <div className="surface-card rounded-xl p-5 md:p-6">
-                  <h4 className="text-base font-semibold text-slate-900 mb-4">Metricas de impacto</h4>
+                  <h4 className="text-base font-semibold text-slate-900 mb-4">Métricas de impacto</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
                       <p className="text-xs text-slate-500">Personas beneficiadas</p>
                       <p className="text-lg font-semibold text-slate-900">{selectedExperience.impactMetrics.peopleBenefited.toLocaleString()}</p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
-                      <p className="text-xs text-slate-500">Areas rehabilitadas</p>
+                      <p className="text-xs text-slate-500">Áreas rehabilitadas</p>
                       <p className="text-lg font-semibold text-slate-900">{selectedExperience.impactMetrics.rehabilitatedAreas.toLocaleString()} m2</p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
-                      <p className="text-xs text-slate-500">Arboles plantados</p>
+                      <p className="text-xs text-slate-500">Árboles plantados</p>
                       <p className="text-lg font-semibold text-slate-900">{selectedExperience.impactMetrics.treesPlanted}</p>
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
@@ -1367,22 +1367,22 @@ export default function Impact({ proposals }: ImpactProps) {
                       {selectedExperience.institutionalEvidence.contracts.map((item) => <p key={item} className="text-slate-700">• {item}</p>)}
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3">
-                      <p className="font-semibold text-slate-900 mb-2">Auditorias</p>
+                      <p className="font-semibold text-slate-900 mb-2">Auditorías</p>
                       {selectedExperience.institutionalEvidence.audits.map((item) => <p key={item} className="text-slate-700">• {item}</p>)}
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3">
-                      <p className="font-semibold text-slate-900 mb-2">Documentacion tecnica</p>
+                      <p className="font-semibold text-slate-900 mb-2">Documentación técnica</p>
                       {selectedExperience.institutionalEvidence.technicalDocs.map((item) => <p key={item} className="text-slate-700">• {item}</p>)}
                     </div>
                     <div className="rounded-lg border border-slate-200 p-3 md:col-span-2">
-                      <p className="font-semibold text-slate-900 mb-2">Evidencia publica de ejecucion</p>
+                      <p className="font-semibold text-slate-900 mb-2">Evidencia pública de ejecución</p>
                       {selectedExperience.institutionalEvidence.publicExecutionEvidence.map((item) => <p key={item} className="text-slate-700">• {item}</p>)}
                     </div>
                   </div>
                 </div>
 
                 <div className="surface-card rounded-xl p-5 md:p-6">
-                  <h4 className="text-base font-semibold text-slate-900 mb-4">Participacion ciudadana</h4>
+                  <h4 className="text-base font-semibold text-slate-900 mb-4">Participación ciudadana</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-sm">
                     <div className="rounded-lg border border-slate-200 p-3 bg-slate-50">
                       <p className="text-xs text-slate-500">Votos totales</p>
@@ -1408,7 +1408,7 @@ export default function Impact({ proposals }: ImpactProps) {
                 </div>
 
                 <div className="surface-card rounded-xl p-5 md:p-6">
-                  <h4 className="text-base font-semibold text-slate-900 mb-4">Feedback comunitario post-completacion</h4>
+                  <h4 className="text-base font-semibold text-slate-900 mb-4">Feedback comunitario post-completación</h4>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                     <div className="rounded-lg border border-slate-200 p-3">
@@ -1417,7 +1417,7 @@ export default function Impact({ proposals }: ImpactProps) {
                         value={maintenanceIssue}
                         onChange={(e) => setMaintenanceIssue(e.target.value)}
                         rows={3}
-                        placeholder="Ej. luminaria danada, bache, senaletica deteriorada"
+                        placeholder="Ej. luminaria dañada, bache, señalética deteriorada"
                         className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                       />
                       <button onClick={() => submitCommunityPost('issue')} className="mt-2 w-full rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium py-2">
@@ -1449,15 +1449,15 @@ export default function Impact({ proposals }: ImpactProps) {
                         className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
                       />
                       <button onClick={() => submitCommunityPost('update')} className="mt-2 w-full rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2">
-                        Enviar actualizacion
+                        Enviar actualización
                       </button>
                     </div>
                   </div>
 
                   <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                    <p className="text-sm font-semibold text-slate-900 mb-2">Conversacion comunitaria y seguimiento</p>
+                    <p className="text-sm font-semibold text-slate-900 mb-2">Conversación comunitaria y seguimiento</p>
                     <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                      {communityPosts.length === 0 && <p className="text-sm text-slate-600">Sin publicaciones aun.</p>}
+                      {communityPosts.length === 0 && <p className="text-sm text-slate-600">Sin publicaciones aún.</p>}
                       {communityPosts.map((post) => (
                         <div key={post.id} className="rounded-lg bg-white border border-slate-200 p-3">
                           <div className="flex items-center justify-between gap-2 mb-1">

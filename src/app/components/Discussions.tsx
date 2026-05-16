@@ -24,60 +24,60 @@ interface Discussion {
 }
 
 const mockDiscussions: Discussion[] = [
-  {
-    id: '1',
-    title: 'How will the new playground equipment accommodate children with disabilities?',
-    author: 'Jennifer Walsh',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jennifer',
-    projectTitle: 'Community Park Renovation',
-    content: 'I love this proposal! However, I\'m wondering if the playground equipment will include accessible features for children with mobility challenges. This is important for our community.',
-    replies: 24,
-    likes: 45,
-    isPinned: true,
-    createdAt: '2026-05-14',
-    tags: ['accessibility', 'playground']
-  },
-  {
-    id: '2',
-    title: 'Bike lane routing concerns near school zone',
-    author: 'Robert Chen',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Robert',
-    projectTitle: 'New Bike Lanes on Main Street',
-    content: 'The proposed bike lane goes right by Lincoln Elementary. Have we considered the safety implications during school drop-off and pick-up times?',
-    replies: 18,
-    likes: 32,
-    isPinned: false,
-    createdAt: '2026-05-15',
-    tags: ['safety', 'schools']
-  },
-  {
-    id: '3',
-    title: 'What types of vegetables will we be able to grow?',
-    author: 'Emma Green',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
-    projectTitle: 'Urban Garden Initiative',
-    content: 'I\'m excited about this project! Can someone share information about what crops would work best in our climate and soil conditions?',
-    replies: 42,
-    likes: 67,
-    isPinned: false,
-    createdAt: '2026-05-13',
-    tags: ['gardening', 'sustainability']
-  },
-  {
-    id: '4',
-    title: 'WiFi coverage and tech support availability',
-    author: 'Marcus Johnson',
-    authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus',
-    projectTitle: 'Public Library Technology Upgrade',
-    content: 'This is a great initiative! Will there be staff available to help seniors and others who aren\'t as tech-savvy? Also, what about WiFi coverage in all areas of the library?',
-    replies: 15,
-    likes: 28,
-    isPinned: true,
-    createdAt: '2026-05-16',
-    tags: ['technology', 'accessibility']
-  },
-  {
-    id: '5',
+   {
+     id: '1',
+     title: '¿Cómo se adaptará la nueva equipación del parque para niños con discapacidades?',
+     author: 'Jennifer Walsh',
+     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jennifer',
+     projectTitle: 'Renovación del Parque Comunitario',
+     content: '¡Me encanta esta propuesta! Sin embargo, me pregunto si la equipación del parque incluirá características accesibles para niños con desafíos de movilidad. Esto es importante para nuestra comunidad.',
+     replies: 24,
+     likes: 45,
+     isPinned: true,
+     createdAt: '2026-05-14',
+     tags: ['accesibilidad', 'parque infantil']
+   },
+   {
+     id: '2',
+     title: 'Inquietudes sobre el ruta del carril bici cerca de la escuela',
+     author: 'Robert Chen',
+     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Robert',
+     projectTitle: 'Nuevos Carriles Bici en Calle Principal',
+     content: 'El carril bici propuesto pasa justo por la Escuela Primaria Lincoln. ¿Hemos considerado las implicaciones de seguridad durante la llegada y salida de la escuela?',
+     replies: 18,
+     likes: 32,
+     isPinned: false,
+     createdAt: '2026-05-15',
+     tags: ['seguridad', 'escuelas']
+   },
+   {
+     id: '3',
+     title: '¿Qué tipos de verduras podremos cultivar?',
+     author: 'Emma Green',
+     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emma',
+     projectTitle: 'Iniciativa de Huerto Urbano',
+     content: '¡Estoy entusiasmado sobre este proyecto! ¿Puede alguien compartir información sobre qué cultivos funcionarían mejor en nuestro clima y condiciones del suelo?',
+     replies: 42,
+     likes: 67,
+     isPinned: false,
+     createdAt: '2026-05-13',
+     tags: ['jardinería', 'sostenibilidad']
+   },
+   {
+     id: '4',
+     title: 'Cobertura de WiFi y disponibilidad de soporte técnico',
+     author: 'Marcus Johnson',
+     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus',
+     projectTitle: 'Actualización Tecnológica de la Biblioteca Pública',
+     content: '¡Esto es una gran iniciativa! ¿Habrá personal disponible para ayudar a adultos mayores y otros que no sean tan expertos en tecnología? Además, ¿qué hay sobre la cobertura de WiFi en todas las áreas de la biblioteca?',
+     replies: 15,
+     likes: 28,
+     isPinned: true,
+     createdAt: '2026-05-16',
+     tags: ['tecnología', 'accesibilidad']
+   },
+   {
+     id: '5',
     title: 'Timeline for completion and maintenance plan',
     author: 'Lisa Patel',
     authorAvatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa',
@@ -155,12 +155,12 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
       {/* Header */}
       <div className="mb-8">
         <h1 className="app-heading-lg mb-2">Discusiones Comunitarias</h1>
-        <p className="app-subtle">Unete a la conversacion sobre proyectos de presupuesto publico</p>
-        {!deliberationEnabled && (
-          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            La participacion en debates esta bloqueada en la fase actual. Debe estar activa la fase Community Deliberation.
-          </div>
-        )}
+         <p className="app-subtle">Únete a la conversación sobre proyectos de presupuesto público</p>
+         {!deliberationEnabled && (
+           <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+             La participación en debates está bloqueada en la fase actual. Debe estar activa la fase Community Deliberation.
+           </div>
+         )}
       </div>
 
       {/* Search and Filters */}
@@ -214,7 +214,7 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
           }`}
         >
           {deliberationEnabled ? <MessageCircle className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
-          {deliberationEnabled ? 'Iniciar una Nueva Discusión' : 'Disponible solo en Community Deliberation'}
+          {deliberationEnabled ? 'Iniciar una Nueva Discusión' : 'Disponible solo en Deliberación Comunitaria'}
         </button>
       </div>
 
@@ -320,16 +320,16 @@ export default function Discussions({ currentPhase }: DiscussionsProps) {
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No se encontraron discusiones</h3>
           <p className="text-gray-600 mb-4">Intenta ajustar tu búsqueda o filtros</p>
-          <button
-            disabled={!deliberationEnabled}
-            className={`px-6 py-2 rounded-lg transition-colors font-medium ${
-              deliberationEnabled
-                ? 'bg-purple-600 text-white hover:bg-purple-700'
-                : 'bg-gray-100 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {deliberationEnabled ? 'Iniciar la Primera Discusión' : 'Disponible solo en Deliberate Phase'}
-          </button>
+           <button
+             disabled={!deliberationEnabled}
+             className={`px-6 py-2 rounded-lg transition-colors font-medium ${
+               deliberationEnabled
+                 ? 'bg-purple-600 text-white hover:bg-purple-700'
+                 : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+             }`}
+           >
+             {deliberationEnabled ? 'Iniciar la Primera Discusión' : 'Disponible solo en la fase Deliberación'}
+           </button>
         </div>
       )}
     </div>

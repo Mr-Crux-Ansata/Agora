@@ -68,8 +68,8 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 mb-2">Votacion deshabilitada</p>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">La seccion de votacion solo se habilita en la fase Voting</h1>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700 mb-2">Votación deshabilitada</p>
+           <h1 className="text-2xl font-bold text-slate-900 mb-2">La sección de votación solo se habilita en la fase Voting</h1>
           <p className="text-sm text-slate-700">Ahora mismo el sistema esta en otra fase. Cuando se active Voting, podras entrar a la cabina de votacion desde el menu.</p>
         </div>
       </div>
@@ -248,7 +248,7 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
                 {!votingEnabled
                   ? 'Disponible solo en Voting'
                   : isCountdownFinished
-                  ? 'Periodo de votacion finalizado'
+                  ? 'Período de votación finalizado'
                   : votedProposals.has(selectedProposal.id)
                   ? 'Voto registrado'
                   : 'Emitir voto con confirmacion'}
@@ -263,7 +263,7 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Search className="w-8 h-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay propuestas abiertas a votacion</h3>
+           <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay propuestas abiertas a votación</h3>
           <p className="text-gray-600">Intenta ajustar la busqueda o espera la apertura de la urna.</p>
         </div>
       )}
@@ -284,18 +284,18 @@ export default function VotingSection({ proposals, currentPhase }: VotingSection
             </div>
 
             <div className="mt-5 flex gap-2">
-              <button
-                onClick={() => setShowVoteConfirmation(false)}
-                className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={confirmVote}
-                className="flex-1 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
-              >
-                Si, estoy seguro
-              </button>
+               <button
+                 onClick={() => setShowVoteConfirmation(false)}
+                 className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+               >
+                 Cancelar
+               </button>
+               <button
+                 onClick={confirmVote}
+                 className="flex-1 rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
+               >
+                 Sí, estoy seguro
+               </button>
             </div>
           </div>
         </div>

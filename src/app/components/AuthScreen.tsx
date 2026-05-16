@@ -33,14 +33,14 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
   const [ineData, setIneData] = useState({ claveElector: '', section: '' });
   const [ineFileName, setIneFileName] = useState('');
   const [ineVerified, setIneVerified] = useState(false);
-  const [ineStatusMessage, setIneStatusMessage] = useState('Aun no has verificado tu INE.');
+   const [ineStatusMessage, setIneStatusMessage] = useState('Aún no has verificado tu INE.');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validate = () => {
     const next: Record<string, string> = {};
     if (mode === 'register' && !form.name.trim()) next.name = 'Ingresa tu nombre';
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) next.email = 'Correo invalido';
-    if (form.password.length < 6) next.password = 'Minimo 6 caracteres';
+    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) next.email = 'Correo inválido';
+    if (form.password.length < 6) next.password = 'Mínimo 6 caracteres';
     if (mode === 'register' && !form.neighborhood) next.neighborhood = 'Selecciona tu colonia o barrio';
     if (mode === 'register' && !form.district) next.district = 'Selecciona tu distrito';
     if (mode === 'register' && !form.municipality) next.municipality = 'Selecciona tu municipio';
@@ -52,9 +52,9 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
   const handleIneValidation = () => {
     if (verificationMethod === 'manual') {
       if (ineData.claveElector.trim().length < 10 || ineData.section.trim().length < 3) {
-        setErrors(prev => ({ ...prev, ine: 'Completa Clave de Elector y Seccion Electoral validas' }));
+        setErrors(prev => ({ ...prev, ine: 'Completa Clave de Elector y Sección Electoral válidas' }));
         setIneVerified(false);
-        setIneStatusMessage('Validacion INE pendiente por datos incompletos.');
+        setIneStatusMessage('Validación INE pendiente por datos incompletos.');
         return;
       }
     }
@@ -62,7 +62,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
     if (verificationMethod === 'scan' && !ineFileName) {
       setErrors(prev => ({ ...prev, ine: 'Sube una imagen de tu credencial INE para escanearla' }));
       setIneVerified(false);
-      setIneStatusMessage('Validacion INE pendiente por falta de archivo.');
+      setIneStatusMessage('Validación INE pendiente por falta de archivo.');
       return;
     }
 
@@ -72,7 +72,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
       return next;
     });
     setIneVerified(true);
-    setIneStatusMessage('INE verificada. Tu seccion electoral quedo asociada al territorio habilitado.');
+     setIneStatusMessage('INE verificada. Tu sección electoral quedó asociada al territorio habilitado.');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,7 +113,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
               <span className="block text-fuchsia-200">con identidad verificada</span>
             </h2>
             <p className="text-sm text-fuchsia-100/90 leading-relaxed max-w-sm">
-              Propone y vota en procesos territoriales con validacion ciudadana y reglas claras de elegibilidad.
+               Propone y vota en procesos territoriales con validación ciudadana y reglas claras de elegibilidad.
             </p>
           </div>
 
@@ -126,11 +126,11 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
             <div className="rounded-xl border border-white/20 bg-white/10 p-3 backdrop-blur-md">
               <MessageCircle className="w-5 h-5 text-violet-200 mb-2" />
               <p className="text-xs font-semibold">Deliberacion</p>
-              <p className="text-[11px] text-fuchsia-100/80 mt-1">Dialogo abierto</p>
+              <p className="text-[11px] text-fuchsia-100/80 mt-1">Diálogo abierto</p>
             </div>
             <div className="rounded-xl border border-white/20 bg-white/10 p-3 backdrop-blur-md">
               <Vote className="w-5 h-5 text-emerald-200 mb-2" />
-              <p className="text-xs font-semibold">Votacion</p>
+              <p className="text-xs font-semibold">Votación</p>
               <p className="text-[11px] text-fuchsia-100/80 mt-1">Un voto por persona</p>
             </div>
           </div>
@@ -144,11 +144,11 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
               </div>
               <div className="rounded-lg bg-black/20 border border-white/10 p-2">
                 <p className="text-[11px] text-fuchsia-100/80">Territorio</p>
-                <p className="text-sm font-semibold">Seccion elegible</p>
+                <p className="text-sm font-semibold">Sección elegible</p>
               </div>
             </div>
             <p className="text-xs text-fuchsia-100/85 leading-relaxed">
-              Tu informacion personal permanece cifrada y nunca se muestra publicamente en resultados.
+              Tu información personal permanece cifrada y nunca se muestra públicamente en resultados.
             </p>
           </div>
         </div>
@@ -162,15 +162,15 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-pink-200/5 rounded-full blur-3xl -ml-40 -mb-40" />
 
         {/* Mobile logo */}
-        <div className="flex md:hidden items-center gap-3 mb-4 relative z-10">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-fuchsia-400 to-pink-500 flex items-center justify-center shadow-lg">
-            <MapPin className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold tracking-tight">Agora</h3>
-            <p className="text-xs text-gray-600">Presupuesto participativo</p>
-          </div>
-        </div>
+         <div className="flex md:hidden items-center gap-3 mb-4 relative z-10">
+           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-fuchsia-400 to-pink-500 flex items-center justify-center shadow-lg">
+             <MapPin className="w-6 h-6 text-white" />
+           </div>
+           <div>
+             <h3 className="text-lg font-bold tracking-tight">Agora</h3>
+             <p className="text-xs text-gray-600">Presupuesto participativo</p>
+           </div>
+         </div>
 
         <div className="w-full max-w-lg relative z-10">
 
@@ -235,7 +235,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
             )}
 
             <div>
-              <label className="text-xs font-semibold text-gray-700 mb-1 block">Correo electronico</label>
+              <label className="text-xs font-semibold text-gray-700 mb-1 block">Correo electrónico</label>
               <div className="relative group">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -353,7 +353,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
               <div className="rounded-lg border border-fuchsia-200 bg-fuchsia-50/50 p-3 space-y-3">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-fuchsia-700" />
-                  <p className="text-xs font-semibold text-fuchsia-900">Verificacion de identidad INE</p>
+                  <p className="text-xs font-semibold text-fuchsia-900">Verificación de identidad INE</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -362,7 +362,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
                     onClick={() => {
                       setVerificationMethod('manual');
                       setIneVerified(false);
-                      setIneStatusMessage('Aun no has verificado tu INE.');
+                      setIneStatusMessage('Aún no has verificado tu INE.');
                     }}
                     className={`py-2 text-xs font-semibold rounded-md border transition-colors ${
                       verificationMethod === 'manual'
@@ -377,7 +377,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
                     onClick={() => {
                       setVerificationMethod('scan');
                       setIneVerified(false);
-                      setIneStatusMessage('Aun no has verificado tu INE.');
+                      setIneStatusMessage('Aún no has verificado tu INE.');
                     }}
                     className={`py-2 text-xs font-semibold rounded-md border transition-colors ${
                       verificationMethod === 'scan'
@@ -406,7 +406,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
                     </div>
                     <input
                       type="text"
-                      placeholder="Seccion electoral"
+                      placeholder="Sección electoral"
                       value={ineData.section}
                       onChange={e => {
                         setIneVerified(false);
@@ -450,7 +450,7 @@ export default function AuthScreen({ onAuth }: AuthScreenProps) {
                 </p>
                 {errors.ine && <p className="text-xs text-red-500">{errors.ine}</p>}
                 <p className="text-xs text-gray-600">
-                  Proteccion de datos: tu informacion de identidad se cifra, no se publica y se usa solo para validar elegibilidad territorial y prevenir voto duplicado.
+                  Protección de datos: tu información de identidad se cifra, no se publica y se usa sólo para validar elegibilidad territorial y prevenir voto duplicado.
                 </p>
               </div>
             )}

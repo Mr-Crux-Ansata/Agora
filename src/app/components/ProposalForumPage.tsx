@@ -82,7 +82,7 @@ export default function ProposalForumPage({
           Volver a propuestas
         </button>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
-          <p className="text-slate-700 font-semibold">No se encontro la propuesta seleccionada.</p>
+           <p className="text-slate-700 font-semibold">No se encontró la propuesta seleccionada.</p>
         </div>
       </div>
     );
@@ -340,7 +340,7 @@ export default function ProposalForumPage({
       {proposal.state === 'officially_submitted' && (
         <div className="mt-6 rounded-xl border border-violet-200 bg-violet-50 p-4 text-sm text-violet-900 inline-flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />
-          La propuesta fue enviada oficialmente y queda lista para evaluacion institucional.
+          La propuesta fue enviada oficialmente y queda lista para evaluación institucional.
         </div>
       )}
 

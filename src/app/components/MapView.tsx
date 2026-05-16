@@ -30,16 +30,16 @@ interface TerritorialItem {
 }
 
 const categoryOptions = [
-  'parks',
-  'lighting',
-  'mobility',
-  'accessibility',
-  'security',
-  'green areas',
-  'culture',
-  'sports',
-  'education'
-] as const;
+   'parques',
+   'iluminación',
+   'movilidad',
+   'accesibilidad',
+   'seguridad',
+   'áreas verdes',
+   'cultura',
+   'deporte',
+   'educación'
+ ] as const;
 
 const statusOptions: ProposalState[] = [
   'draft',
@@ -58,22 +58,22 @@ const statusOptions: ProposalState[] = [
 ];
 
 const statusLabels: Record<ProposalState, string> = {
-  draft: 'Borrador',
-  community_preview: 'Community Preview',
-  in_preparation: 'In Preparation',
-  officially_submitted: 'Officially Submitted',
-  under_institutional_review: 'Under Institutional Review',
-  submitted: 'Enviada',
-  under_review: 'En revisión',
-  approved: 'Aprobada',
-  rejected: 'Rechazada',
-  in_deliberation: 'En deliberación',
-  open_for_voting: 'Abierta a votación',
-  winning_project: 'Proyecto ganador',
-  in_progress: 'En progreso',
-  delayed: 'Atrasada',
-  completed: 'Completada'
-};
+   draft: 'Borrador',
+   community_preview: 'Vista comunitaria',
+   in_preparation: 'Pre-envío',
+   officially_submitted: 'Enviada oficialmente',
+   under_institutional_review: 'Bajo revisión institucional',
+   submitted: 'Enviada',
+   under_review: 'En revisión',
+   approved: 'Aprobada',
+   rejected: 'Rechazada',
+   in_deliberation: 'En deliberación',
+   open_for_voting: 'Abierta a votación',
+   winning_project: 'Proyecto ganador',
+   in_progress: 'En progreso',
+   delayed: 'Atrasada',
+   completed: 'Completada'
+ };
 
 const statusColors: Record<ProposalState, string> = {
   draft: 'bg-slate-500',
