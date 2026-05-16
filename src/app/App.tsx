@@ -197,6 +197,15 @@ export default function App() {
     setProposals(prev => [newProposal, ...prev]);
   };
 
+  const updateProposalContent = (
+    proposalId: string,
+    updates: Partial<Pick<Proposal, 'title' | 'description' | 'neighborhood' | 'image' | 'category' | 'budget' | 'peopleBenefited'>>
+  ) => {
+    setProposals((prev) =>
+      prev.map((proposal) => (proposal.id === proposalId ? { ...proposal, ...updates } : proposal))
+    );
+  };
+
   const transitionProposalState = (proposalId: string, nextState: ProposalState) => {
     const allowedTransitions: Record<ProposalState, ProposalState[]> = {
       draft: ['community_preview'],
@@ -245,7 +254,14 @@ export default function App() {
       case 'map':
         return <MapView proposals={proposals} />;
       case 'proposals':
-        return <Proposals proposals={proposals} currentPhase={currentPhase} onProposalStateChange={transitionProposalState} />;
+        return (
+          <Proposals
+            proposals={proposals}
+            currentPhase={currentPhase}
+            onProposalStateChange={transitionProposalState}
+            onProposalUpdate={updateProposalContent}
+          />
+        );
       case 'discussions':
         return <Discussions currentPhase={currentPhase} />;
       case 'impact':
