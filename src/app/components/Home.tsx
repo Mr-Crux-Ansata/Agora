@@ -1,19 +1,28 @@
-import { useState } from 'react';
 import {
   MapPin,
-  TrendingUp,
-  Users,
-  Heart,
-  ArrowRight,
   Sparkles,
-  TreeDeciduous,
-  Building2,
-  CheckCircle2,
-  Clock,
   MessageCircle,
-  Vote
+  Vote,
+  TrendingUp,
+  Lock,
+  Check,
+  ArrowRight,
+  Heart,
+  Clock,
+  CheckCircle2,
+  Building2,
+  Users,
+  Search,
+  ChevronRight,
+  Compass,
+  PenLine,
+  ClipboardCheck,
+  MessageSquare,
+  CheckSquare,
+  FileText,
+  Bot
 } from 'lucide-react';
-import { Proposal } from '../App';
+import { ParticipationPhase, Proposal } from '../App';
 
 type Page = 'home' | 'map' | 'proposals' | 'discussions' | 'impact';
 
@@ -21,10 +30,34 @@ interface HomeProps {
   proposals: Proposal[];
   onNavigate: (page: Page) => void;
   onCreateProposal?: () => void;
+  currentPhase: ParticipationPhase;
+  onSetPhase: (phase: ParticipationPhase) => void;
 }
 
-export default function Home({ proposals, onNavigate, onCreateProposal }: HomeProps) {
-  const nearbyProposals = proposals.slice(0, 3).map((p, index) => ({
+export default function Home({ proposals, onNavigate, onCreateProposal, currentPhase, onSetPhase }: HomeProps) {
+  const phases: { id: ParticipationPhase; num: string; title: string; help: string; color: string; activeBg: string; activeBorder: string; activeText: string; icon: React.ReactNode }[] = [
+    { id: 'discover',  num: '1', title: 'Descubrir',  help: 'Explora proyectos y obras de tu zona',   color: 'from-blue-500 to-cyan-500',    activeBg: 'bg-blue-50',    activeBorder: 'border-blue-500',   activeText: 'text-blue-700',   icon: <Compass className="w-5 h-5" />      },
+    { id: 'propose',   num: '2', title: 'Proponer',   help: 'Crea una propuesta con ayuda guiada',    color: 'from-violet-500 to-purple-600',activeBg: 'bg-violet-50',  activeBorder: 'border-violet-500', activeText: 'text-violet-700', icon: <PenLine className="w-5 h-5" />      },
+    { id: 'evaluate',  num: '3', title: 'Evaluar',    help: 'Sigue la revision tecnica y legal',       color: 'from-amber-500 to-orange-500', activeBg: 'bg-amber-50',   activeBorder: 'border-amber-500',  activeText: 'text-amber-700',  icon: <ClipboardCheck className="w-5 h-5" />},
+    { id: 'deliberate',num: '4', title: 'Deliberar',  help: 'Conversa y mejora las propuestas',        color: 'from-teal-500 to-emerald-500', activeBg: 'bg-teal-50',    activeBorder: 'border-teal-500',   activeText: 'text-teal-700',   icon: <MessageSquare className="w-5 h-5" /> },
+    { id: 'vote',      num: '5', title: 'Votar',      help: 'Elige proyectos para tu comunidad',       color: 'from-pink-500 to-rose-500',    activeBg: 'bg-pink-50',    activeBorder: 'border-pink-500',   activeText: 'text-pink-700',   icon: <CheckSquare className="w-5 h-5" />  }
+  ];
+
+  const activePhase = phases.find(p => p.id === currentPhase)!;
+
+  const phaseLabel: Record<ParticipationPhase, string> = {
+    discover: 'Descubrir',
+    propose: 'Proponer',
+    evaluate: 'Evaluar',
+    deliberate: 'Deliberar',
+    vote: 'Votar'
+  };
+
+  const canCreateProposal = currentPhase === 'propose';
+  const canDeliberate = currentPhase === 'deliberate';
+  const canVote = currentPhase === 'vote';
+
+  const nearbyProposals = proposals.slice(0, 2).map((p, index) => ({
     id: p.id,
     title: p.title,
     neighborhood: p.neighborhood,
@@ -39,262 +72,303 @@ export default function Home({ proposals, onNavigate, onCreateProposal }: HomePr
   }));
 
   const stats = [
-    { label: 'Proyectos Activos', value: '24', icon: Building2, color: 'text-purple-600', bg: 'bg-purple-50' },
-    { label: 'Ciudadanos Participando', value: '12.5K', icon: Users, color: 'text-fuchsia-600', bg: 'bg-fuchsia-50' },
-    { label: 'Votos Totales', value: '8,342', icon: Vote, color: 'text-violet-600', bg: 'bg-violet-50' },
-    { label: 'Presupuesto Asignado', value: '$2.4M', icon: TrendingUp, color: 'text-purple-700', bg: 'bg-purple-100' }
+    { label: 'Proyectos activos', value: '24',    icon: Building2, grad: 'from-purple-500 to-violet-600' },
+    { label: 'Participando',      value: '12.5K', icon: Users,     grad: 'from-fuchsia-500 to-pink-600'  },
+    { label: 'Votos totales',     value: '8,342', icon: Vote,      grad: 'from-violet-500 to-indigo-600' },
+    { label: 'Invertido',         value: '$2.4M', icon: TrendingUp,grad: 'from-emerald-500 to-teal-600'  }
   ];
 
-  const recentActivity = [
-    { type: 'vote', user: 'María S.', action: 'votó por', project: 'Renovación del Parque Comunitario', time: 'hace 2 min' },
-    { type: 'comment', user: 'Juan C.', action: 'comentó en', project: 'Nuevas Ciclovías en Avenida Principal', time: 'hace 15 min' },
-    { type: 'proposal', user: 'Ana R.', action: 'propuso', project: 'Mejora de Seguridad en Parques Infantiles', time: 'hace 1 hora' },
-    { type: 'complete', user: 'Sistema', action: 'completó', project: 'Iniciativa de Huertos Urbanos', time: 'hace 3 horas' }
+  // Action cards config
+  const actionCards = [
+    {
+      key: 'map',
+      icon: <MapPin className="w-10 h-10" />,
+      title: 'Explorar mapa',
+      desc: 'Obras, proyectos y actividad cerca de ti',
+      headerBg: 'bg-sky-600',
+      decoration: 'radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+      enabled: true,
+      lockedMsg: '',
+      onClick: () => onNavigate('map')
+    },
+    {
+      key: 'propose',
+      icon: <FileText className="w-10 h-10" />,
+      title: 'Crear propuesta',
+      desc: 'Con formulario guiado, voz e IA',
+      headerBg: 'bg-indigo-600',
+      decoration: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+      enabled: canCreateProposal,
+      lockedMsg: 'Fase Proponer',
+      onClick: onCreateProposal
+    },
+    {
+      key: 'deliberate',
+      icon: <MessageSquare className="w-10 h-10" />,
+      title: 'Deliberar',
+      desc: 'Conversa y mejora propuestas',
+      headerBg: 'bg-emerald-600',
+      decoration: 'radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+      enabled: canDeliberate,
+      lockedMsg: 'Fase Deliberar',
+      onClick: () => onNavigate('discussions')
+    },
+    {
+      key: 'vote',
+      icon: <Vote className="w-10 h-10" />,
+      title: 'Votar',
+      desc: 'Elige proyectos para tu comunidad',
+      headerBg: 'bg-orange-500',
+      decoration: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+      enabled: canVote,
+      lockedMsg: 'Fase Votar',
+      onClick: () => onNavigate('proposals')
+    }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Construye el Futuro de tu Comunidad
+    <div className="min-h-screen bg-transparent">
+
+      {/* ── HERO ── */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-purple-700 via-fuchsia-600 to-pink-500 text-white">
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <div className="max-w-2xl">
+            <span className="motion-rise inline-flex items-center gap-2 bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
+              <span className={`w-2 h-2 rounded-full bg-gradient-to-br ${activePhase.color}`} />
+              Fase activa: {phaseLabel[currentPhase]}
+            </span>
+            <h1 className="motion-rise-2 text-4xl sm:text-5xl font-bold leading-tight mb-3 tracking-tight">
+              Tu barrio,<br />tu decision
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-purple-100 mb-8">
-              Propón, vota y da seguimiento a proyectos de presupuesto público en tu barrio. Tu voz importa.
+            <p className="motion-rise-3 text-lg text-purple-100">
+              Elige la fase en la que estas, luego usa las herramientas que se habiliten.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={onCreateProposal}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
-              >
-                <Sparkles className="w-5 h-5" />
-                Crear Propuesta
-              </button>
-              <button
-                onClick={() => onNavigate('map')}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-700 text-white rounded-lg font-semibold hover:bg-purple-800 transition-colors border border-purple-500"
-              >
-                <MapPin className="w-5 h-5" />
-                Explorar Mapa
-              </button>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 mb-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+
+        {/* ── STATS ── */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 -mt-6">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.label} className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 ${stat.bg} rounded-lg flex items-center justify-center`}>
-                    <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${stat.color}`} />
-                  </div>
-                  <div>
-                    <div className="text-xl sm:text-2xl font-bold text-gray-900">{stat.value}</div>
-                    <div className="text-xs sm:text-sm text-gray-600">{stat.label}</div>
-                  </div>
+              <div key={stat.label} className="surface-card card-lift rounded-2xl p-4 sm:p-5 flex items-center gap-3">
+                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${stat.grad} flex items-center justify-center flex-shrink-0`}>
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <div className="text-xl sm:text-2xl font-extrabold text-gray-900 leading-none">{stat.value}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{stat.label}</div>
                 </div>
               </div>
             );
           })}
-        </div>
-      </div>
+        </section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Nearby Proposals */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">Proyectos Cercanos</h2>
-              <button onClick={() => onNavigate('proposals')} className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1">
-                Ver todos
-                <ArrowRight className="w-4 h-4" />
+        {/* ── FASE STEPPER ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-5">
+            <span className="flex items-center justify-center w-7 h-7 rounded-full bg-purple-600 text-white text-sm font-bold">1</span>
+            <h2 className="app-heading-lg">Elige la fase del ciclo</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            {phases.map((phase, i) => {
+              const active = phase.id === currentPhase;
+              return (
+                <button
+                  key={phase.id}
+                  onClick={() => onSetPhase(phase.id)}
+                    className={`card-lift relative text-left rounded-2xl border-2 p-4 transition-all ${
+                    active
+                      ? `${phase.activeBorder} ${phase.activeBg} shadow-md`
+                      : 'border-transparent bg-white shadow-sm hover:shadow-md hover:border-gray-300'
+                  }`}
+                >
+                  <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${phase.color} flex items-center justify-center text-white font-bold text-sm mb-3`}>
+                    {active ? <Check className="w-5 h-5" /> : phase.icon}
+                  </div>
+                  <p className={`font-bold text-sm ${active ? phase.activeText : 'text-gray-800'}`}>{phase.title}</p>
+                  <p className={`text-xs mt-1 leading-snug ${active ? phase.activeText + '/80' : 'text-gray-500'}`}>{phase.help}</p>
+                  {i < phases.length - 1 && (
+                    <ChevronRight className="hidden sm:block absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 z-10" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ── ACCIONES ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-5">
+            <span className="flex items-center justify-center w-7 h-7 rounded-full bg-purple-600 text-white text-sm font-bold">2</span>
+            <h2 className="text-xl font-bold text-gray-900">Usa las funciones de esta fase</h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            {actionCards.map((card) => (
+              <button
+                key={card.key}
+                onClick={card.enabled ? card.onClick : undefined}
+                disabled={!card.enabled}
+                className={`card-lift w-full text-left rounded-2xl border overflow-hidden transition-all ${
+                  card.enabled
+                    ? 'border-gray-200 bg-white hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
+                    : 'border-gray-200 bg-white cursor-not-allowed'
+                }`}
+              >
+                {/* Visual header */}
+                <div
+                  className={`relative h-28 flex items-center justify-center ${card.enabled ? card.headerBg : 'bg-gray-200'}`}
+                  style={{ backgroundImage: card.enabled ? card.decoration : undefined }}
+                >
+                  {/* Decorative circles */}
+                  <div className="absolute bottom-0 right-0 w-16 h-16 rounded-full bg-black/10 translate-x-4 translate-y-4" />
+                  <div className="absolute top-0 left-0 w-10 h-10 rounded-full bg-white/10 -translate-x-3 -translate-y-3" />
+                  <div className={`relative ${card.enabled ? 'text-white' : 'text-gray-400'}`}>
+                    {card.enabled ? card.icon : <Lock className="w-10 h-10" />}
+                  </div>
+                </div>
+                {/* Text body */}
+                <div className="p-4">
+                  <p className={`font-semibold text-sm ${card.enabled ? 'text-gray-900' : 'text-gray-400'}`}>
+                    {card.title}
+                  </p>
+                  <p className={`text-xs mt-1 leading-snug ${card.enabled ? 'text-gray-500' : 'text-gray-400'}`}>
+                    {card.enabled ? card.desc : `Disponible en: ${card.lockedMsg}`}
+                  </p>
+                  {card.enabled && (
+                    <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-gray-400">
+                      Abrir <ArrowRight className="w-3 h-3" />
+                    </span>
+                  )}
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* ── CAPA CONTINUA ── */}
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-500 text-white p-6">
+          <div className="absolute right-0 top-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="flex-1">
+              <p className="text-xs font-semibold tracking-widest uppercase text-blue-200 mb-1">Siempre activa</p>
+              <h3 className="text-xl font-bold mb-1">Capa de Seguimiento Continuo</h3>
+              <p className="text-blue-100 text-sm">Obras en progreso, evidencia publica, cronogramas, reportes ciudadanos e inversion historica por barrio.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => onNavigate('impact')}
+                className="px-4 py-2 bg-white text-indigo-700 font-semibold text-sm rounded-xl hover:bg-blue-50 transition-colors"
+              >
+                Ver impacto
+              </button>
+              <button
+                onClick={() => onNavigate('map')}
+                className="px-4 py-2 bg-white/20 text-white font-semibold text-sm rounded-xl hover:bg-white/30 transition-colors"
+              >
+                Ver mapa
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* ── PROYECTOS CERCANOS + ASISTENTE ── */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-10">
+          <div className="lg:col-span-2">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="app-heading-lg">Proyectos cercanos</h3>
+              <button onClick={() => onNavigate('proposals')} className="text-purple-600 hover:text-purple-700 font-semibold text-sm flex items-center gap-1">
+                Ver todos <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-4">
               {nearbyProposals.map((proposal) => (
-                <div key={proposal.id} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                  <div className="flex flex-col sm:flex-row">
-                    <div className="w-full sm:w-48 h-48 sm:h-auto bg-gray-200">
-                      <img
-                        src={proposal.image}
-                        alt={proposal.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 p-4 sm:p-6">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1">
-                            {proposal.title}
-                          </h3>
-                          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-                            <MapPin className="w-4 h-4" />
-                            <span>{proposal.neighborhood}</span>
-                            <span>•</span>
-                            <span>{proposal.distance}</span>
-                          </div>
-                        </div>
-                        {proposal.status === 'voting' && (
-                          <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
-                            Votación
+                <div key={proposal.id} className="surface-card card-lift rounded-2xl overflow-hidden flex flex-col sm:flex-row">
+                  <div className="w-full sm:w-36 h-36 flex-shrink-0">
+                    <img src={proposal.image} alt={proposal.title} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 p-4 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-start justify-between gap-2 mb-1">
+                        <p className="font-bold text-gray-900">{proposal.title}</p>
+                        {proposal.status === 'completed' && (
+                          <span className="shrink-0 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Completado
                           </span>
                         )}
                         {proposal.status === 'construction' && (
-                          <span className="px-3 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">
-                            En Progreso
-                          </span>
+                          <span className="shrink-0 px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full">En progreso</span>
                         )}
-                        {proposal.status === 'completed' && (
-                          <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" />
-                            Completado
-                          </span>
+                        {proposal.status === 'voting' && (
+                          <span className="shrink-0 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">Votacion</span>
                         )}
                       </div>
-
-                      {proposal.status === 'voting' && (
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-4 text-sm text-gray-600">
-                              <span className="flex items-center gap-1">
-                                <Heart className="w-4 h-4" />
-                                {proposal.votes} votos
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <MessageCircle className="w-4 h-4" />
-                                {proposal.comments} comentarios
-                              </span>
-                            </div>
-                            <span className="text-sm text-gray-600 flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {proposal.daysLeft} días restantes
-                            </span>
-                          </div>
-                          <button className="w-full mt-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
-                            Votar Ahora
-                          </button>
-                        </div>
-                      )}
-
-                      {proposal.status === 'construction' && proposal.progress && (
-                        <div className="mt-4">
-                          <div className="flex items-center justify-between mb-2 text-sm">
-                            <span className="text-gray-600">Progreso de Construcción</span>
-                            <span className="font-semibold text-gray-900">{proposal.progress}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-purple-500 h-2 rounded-full transition-all"
-                              style={{ width: `${proposal.progress}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      )}
-
-                      {proposal.status === 'completed' && (
-                        <div className="mt-4 flex items-center justify-between">
-                          <span className="text-sm text-gray-600">
-                            Completado {proposal.completedDate}
-                          </span>
-                          <button
-                            onClick={() => onNavigate('impact')}
-                            className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
-                          >
-                            Ver Impacto
-                            <ArrowRight className="w-4 h-4" />
-                          </button>
-                        </div>
-                      )}
+                      <p className="text-sm text-gray-500 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5" /> {proposal.neighborhood} • {proposal.distance}
+                      </p>
                     </div>
+                    {proposal.status === 'voting' && (
+                      <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
+                        <span className="flex items-center gap-1"><Heart className="w-4 h-4 text-pink-500" />{proposal.votes}</span>
+                        <span className="flex items-center gap-1"><MessageCircle className="w-4 h-4 text-blue-500" />{proposal.comments}</span>
+                        {proposal.daysLeft && <span className="flex items-center gap-1"><Clock className="w-4 h-4 text-amber-500" />{proposal.daysLeft} dias</span>}
+                      </div>
+                    )}
+                    {proposal.status === 'construction' && proposal.progress && (
+                      <div className="mt-2">
+                        <div className="flex justify-between text-xs text-gray-500 mb-1"><span>Progreso</span><span>{proposal.progress}%</span></div>
+                        <div className="w-full bg-gray-100 rounded-full h-1.5">
+                          <div className="bg-gradient-to-r from-purple-500 to-fuchsia-500 h-1.5 rounded-full" style={{ width: `${proposal.progress}%` }} />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right Column - Activity Feed & Quick Actions */}
-          <div className="space-y-6">
-            {/* Quick Actions */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Acciones Rápidas</h3>
-              <div className="space-y-3">
-                <button
-                  onClick={onCreateProposal}
-                  className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white rounded-lg hover:from-purple-700 hover:to-fuchsia-700 transition-colors"
-                >
-                  <Sparkles className="w-5 h-5" />
-                  <span className="font-medium">Crear Nueva Propuesta</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('proposals')}
-                  className="w-full flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <Vote className="w-5 h-5 text-gray-700" />
-                  <span className="font-medium text-gray-900">Explorar y Votar</span>
-                </button>
-                <button
-                  onClick={() => onNavigate('map')}
-                  className="w-full flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <MapPin className="w-5 h-5 text-gray-700" />
-                  <span className="font-medium text-gray-900">Explorar Mapa</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Actividad Reciente</h3>
-              <div className="space-y-4">
-                {recentActivity.map((activity, idx) => (
-                  <div key={idx} className="flex gap-3">
-                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      {activity.type === 'vote' && <Heart className="w-4 h-4 text-purple-600" />}
-                      {activity.type === 'comment' && <MessageCircle className="w-4 h-4 text-fuchsia-600" />}
-                      {activity.type === 'proposal' && <Sparkles className="w-4 h-4 text-violet-600" />}
-                      {activity.type === 'complete' && <CheckCircle2 className="w-4 h-4 text-green-600" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900">
-                        <span className="font-medium">{activity.user}</span>{' '}
-                        <span className="text-gray-600">{activity.action}</span>{' '}
-                        <span className="font-medium">{activity.project}</span>
-                      </p>
-                      <p className="text-xs text-gray-500 mt-0.5">{activity.time}</p>
-                    </div>
+          <div className="space-y-4">
+            <div className="surface-card rounded-2xl overflow-hidden">
+              <div className="bg-gradient-to-br from-purple-600 to-fuchsia-600 p-5 text-white">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                    <Bot className="w-6 h-6" />
                   </div>
-                ))}
+                  <div>
+                    <p className="font-bold">Asistente Civico IA</p>
+                    <p className="text-xs text-purple-200">Siempre disponible</p>
+                  </div>
+                </div>
+                <p className="text-sm text-purple-100">Te ayuda a redactar propuestas, entender los pasos y encontrar proyectos cerca de ti.</p>
+              </div>
+              <div className="bg-white p-4">
+                <button className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-fuchsia-700 transition-colors">
+                  Iniciar chat
+                </button>
               </div>
             </div>
 
-            {/* AI Assistant Card */}
-            <div className="bg-gradient-to-br from-purple-50 to-fuchsia-50 rounded-xl shadow-sm p-6 border border-purple-100">
-              <div className="flex items-start gap-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-fuchsia-600 rounded-lg flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">Asistente Cívico IA</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    Obtén ayuda para redactar propuestas, entender las normas o encontrar proyectos cerca de ti.
-                  </p>
-                </div>
+            <div className="surface-card rounded-2xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Search className="w-5 h-5 text-purple-600" />
+                <h4 className="font-bold text-gray-900">No sabes por donde empezar?</h4>
               </div>
-              <button className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white rounded-lg hover:from-purple-700 hover:to-fuchsia-700 transition-colors font-medium">
-                Iniciar Chat
-              </button>
+              <ol className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-start gap-2"><span className="shrink-0 w-5 h-5 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">1</span>Elige la fase en la que esta tu comunidad</li>
+                <li className="flex items-start gap-2"><span className="shrink-0 w-5 h-5 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">2</span>Revisa que herramientas estan activas</li>
+                <li className="flex items-start gap-2"><span className="shrink-0 w-5 h-5 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">3</span>Haz una accion y comparte con tu vecino/a</li>
+              </ol>
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

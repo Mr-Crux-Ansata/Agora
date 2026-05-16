@@ -2,13 +2,12 @@ import { useState } from 'react';
 import {
   MessageCircle,
   Heart,
-  ArrowUp,
   Clock,
   Pin,
-  TrendingUp,
-  Filter,
-  Search
+  Search,
+  Lock
 } from 'lucide-react';
+import { ParticipationPhase } from '../App';
 
 interface Discussion {
   id: string;
@@ -105,10 +104,15 @@ const mockDiscussions: Discussion[] = [
   }
 ];
 
-export default function Discussions() {
+interface DiscussionsProps {
+  currentPhase: ParticipationPhase;
+}
+
+export default function Discussions({ currentPhase }: DiscussionsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTag, setFilterTag] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
+  const deliberationEnabled = currentPhase === 'deliberate';
 
   const allTags = Array.from(new Set(mockDiscussions.flatMap(d => d.tags)));
 
@@ -150,12 +154,17 @@ export default function Discussions() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Discusiones Comunitarias</h1>
-        <p className="text-gray-600">Únete a la conversación sobre proyectos de presupuesto público</p>
+        <h1 className="app-heading-lg mb-2">Discusiones Comunitarias</h1>
+        <p className="app-subtle">Unete a la conversacion sobre proyectos de presupuesto publico</p>
+        {!deliberationEnabled && (
+          <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            La participacion en debates esta bloqueada en la fase actual. Cambia a Deliberate Phase para habilitarla.
+          </div>
+        )}
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+      <div className="surface-card rounded-xl p-4 mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
@@ -196,9 +205,16 @@ export default function Discussions() {
 
       {/* New Discussion Button */}
       <div className="mb-6">
-        <button className="w-full px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium flex items-center justify-center gap-2">
-          <MessageCircle className="w-5 h-5" />
-          Iniciar una Nueva Discusión
+        <button
+          disabled={!deliberationEnabled}
+          className={`w-full px-4 py-3 rounded-lg transition-colors font-medium flex items-center justify-center gap-2 ${
+            deliberationEnabled
+              ? 'bg-purple-600 text-white hover:bg-purple-700'
+              : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+          }`}
+        >
+          {deliberationEnabled ? <MessageCircle className="w-5 h-5" /> : <Lock className="w-5 h-5" />}
+          {deliberationEnabled ? 'Iniciar una Nueva Discusión' : 'Disponible solo en Deliberate Phase'}
         </button>
       </div>
 
@@ -262,17 +278,34 @@ export default function Discussions() {
             {/* Footer */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <div className="flex items-center gap-4">
-                <button className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors">
+                <button
+                  disabled={!deliberationEnabled}
+                  className={`flex items-center gap-1 transition-colors ${
+                    deliberationEnabled ? 'text-gray-600 hover:text-blue-600' : 'text-gray-400 cursor-not-allowed'
+                  }`}
+                >
                   <Heart className="w-5 h-5" />
                   <span className="text-sm font-medium">{discussion.likes}</span>
                 </button>
-                <button className="flex items-center gap-1 text-gray-600 hover:text-blue-600 transition-colors">
+                <button
+                  disabled={!deliberationEnabled}
+                  className={`flex items-center gap-1 transition-colors ${
+                    deliberationEnabled ? 'text-gray-600 hover:text-blue-600' : 'text-gray-400 cursor-not-allowed'
+                  }`}
+                >
                   <MessageCircle className="w-5 h-5" />
                   <span className="text-sm font-medium">{discussion.replies} replies</span>
                 </button>
               </div>
-              <button className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm">
-                View Discussion
+              <button
+                disabled={!deliberationEnabled}
+                className={`px-4 py-2 rounded-lg transition-colors font-medium text-sm ${
+                  deliberationEnabled
+                    ? 'text-blue-600 hover:bg-blue-50'
+                    : 'text-gray-400 bg-gray-100 cursor-not-allowed'
+                }`}
+              >
+                {deliberationEnabled ? 'View Discussion' : 'Bloqueado en esta fase'}
               </button>
             </div>
           </div>
@@ -287,8 +320,15 @@ export default function Discussions() {
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No se encontraron discusiones</h3>
           <p className="text-gray-600 mb-4">Intenta ajustar tu búsqueda o filtros</p>
-          <button className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
-            Iniciar la Primera Discusión
+          <button
+            disabled={!deliberationEnabled}
+            className={`px-6 py-2 rounded-lg transition-colors font-medium ${
+              deliberationEnabled
+                ? 'bg-purple-600 text-white hover:bg-purple-700'
+                : 'bg-gray-100 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {deliberationEnabled ? 'Iniciar la Primera Discusión' : 'Disponible solo en Deliberate Phase'}
           </button>
         </div>
       )}

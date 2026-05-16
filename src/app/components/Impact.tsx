@@ -105,12 +105,12 @@ export default function Impact() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-transparent">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white">
+      <div className="bg-gradient-to-r from-fuchsia-700 via-violet-600 to-indigo-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">Impacto Comunitario</h1>
-          <p className="text-lg md:text-xl text-purple-100">
+          <h1 className="app-heading-xl text-white mb-3">Impacto Comunitario</h1>
+          <p className="text-lg md:text-xl text-purple-100 motion-rise-2">
             Conoce el impacto real del presupuesto participativo en tu comunidad
           </p>
         </div>
@@ -122,7 +122,7 @@ export default function Impact() {
           {totalStats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div key={stat.label} className="bg-white rounded-xl shadow-sm p-6">
+              <div key={stat.label} className="surface-card rounded-xl p-6">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 ${stat.bg} rounded-lg flex items-center justify-center`}>
                     <Icon className={`w-6 h-6 ${stat.color}`} />
@@ -140,7 +140,7 @@ export default function Impact() {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Investment by Neighborhood */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="surface-card rounded-xl p-6">
             <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Inversión por Barrio</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={neighborhoodInvestment}>
@@ -155,7 +155,7 @@ export default function Impact() {
           </div>
 
           {/* Projects by Category */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="surface-card rounded-xl p-6">
             <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Proyectos por Categoría</h3>
             <div className="flex items-center justify-center">
               <ResponsiveContainer width="100%" height={300}>
@@ -181,7 +181,7 @@ export default function Impact() {
           </div>
 
           {/* Project Timeline */}
-          <div className="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+          <div className="surface-card rounded-xl p-6 lg:col-span-2">
             <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Proyectos Completados en el Tiempo</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={timelineData}>
@@ -197,10 +197,10 @@ export default function Impact() {
 
         {/* Completed Projects Showcase */}
         <div className="mb-8">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Proyectos Completados Recientemente</h2>
+          <h2 className="app-heading-lg mb-6">Proyectos Completados Recientemente</h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {completedProjects.map((project) => (
-              <div key={project.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div key={project.id} className="surface-card card-lift rounded-xl overflow-hidden">
                 <div className="h-48 bg-gray-200">
                   <img
                     src={project.image}

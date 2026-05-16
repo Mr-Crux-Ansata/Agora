@@ -48,17 +48,18 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen app-shell relative">
+      <div className="app-grid-overlay pointer-events-none absolute inset-0 opacity-40" />
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="glass-header border-b border-fuchsia-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <button onClick={() => onNavigate('home')} className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-fuchsia-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 brand-accent rounded-xl flex items-center justify-center shadow-md shadow-fuchsia-300/40">
                 <MapPin className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-semibold text-gray-900">PresupuestoCívico</span>
+              <span className="text-xl font-semibold text-gray-900 tracking-tight">PresupuestoCivico</span>
             </button>
 
             {/* Desktop Navigation */}
@@ -70,10 +71,10 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
                   <button
                     key={item.name}
                     onClick={() => onNavigate(item.page)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    className={`nav-pill flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       active
-                        ? 'bg-purple-50 text-purple-600'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-fuchsia-100 text-fuchsia-700 border border-fuchsia-200'
+                        : 'text-gray-700 hover:bg-white/80'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -85,7 +86,7 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
-              <button className="hidden md:flex items-center gap-2 p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+              <button className="hidden md:flex items-center gap-2 p-2 text-gray-700 hover:bg-white/80 rounded-lg transition-colors">
                 <Search className="w-5 h-5" />
               </button>
 
@@ -94,7 +95,7 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
                   setShowNotifications(!showNotifications);
                   setShowProfile(false);
                 }}
-                className="relative p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="relative p-2 text-gray-700 hover:bg-white/80 rounded-lg transition-colors"
               >
                 <Bell className="w-5 h-5" />
                 {notificationCount > 0 && (
@@ -109,14 +110,14 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
                   setShowProfile(!showProfile);
                   setShowNotifications(false);
                 }}
-                className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 text-gray-700 hover:bg-white/80 rounded-lg transition-colors"
               >
                 <User className="w-5 h-5" />
               </button>
 
               {/* Mobile menu button */}
               <button
-                className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="md:hidden p-2 text-gray-700 hover:bg-white/80 rounded-lg"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -127,7 +128,7 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 bg-white">
+          <div className="md:hidden border-t border-fuchsia-100 bg-white/90 backdrop-blur-sm">
             <nav className="px-4 py-3 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -139,10 +140,10 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
                       onNavigate(item.page);
                       setMobileMenuOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                    className={`nav-pill w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                       active
-                        ? 'bg-purple-50 text-purple-600'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-fuchsia-100 text-fuchsia-700 border border-fuchsia-200'
+                        : 'text-gray-700 hover:bg-gray-50'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -156,7 +157,7 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
       </header>
 
       {/* Main Content */}
-      <main className="min-h-[calc(100vh-4rem)]">
+      <main className="min-h-[calc(100vh-4rem)] relative z-10">
         {children}
       </main>
 

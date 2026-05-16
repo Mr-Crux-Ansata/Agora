@@ -126,7 +126,7 @@ export default function MapView() {
   });
 
   return (
-    <div className="h-[calc(100vh-4rem)] relative bg-gray-100">
+    <div className="h-[calc(100vh-4rem)] relative bg-transparent">
       {/* Map Area */}
       <div className="h-full w-full relative overflow-hidden">
         {/* Grid Pattern Background */}

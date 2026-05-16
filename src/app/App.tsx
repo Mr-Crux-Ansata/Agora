@@ -5,8 +5,10 @@ import MapView from './components/MapView';
 import Proposals from './components/Proposals';
 import Discussions from './components/Discussions';
 import Impact from './components/Impact';
+import AuthScreen from './components/AuthScreen';
 
 type Page = 'home' | 'map' | 'proposals' | 'discussions' | 'impact';
+export type ParticipationPhase = 'discover' | 'propose' | 'evaluate' | 'deliberate' | 'vote';
 
 export interface Proposal {
   id: string;
@@ -129,9 +131,21 @@ const initialProposals: Proposal[] = [
 ];
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
   const [currentPage, setCurrentPage] = useState<Page>('home');
   const [proposals, setProposals] = useState<Proposal[]>(initialProposals);
   const [showCreateProposal, setShowCreateProposal] = useState(false);
+  const [currentPhase, setCurrentPhase] = useState<ParticipationPhase>('discover');
+
+  const navigateWithPhase = (page: Page) => {
+    setCurrentPage(page);
+  };
+
+  const openCreateProposal = () => {
+    if (currentPhase !== 'propose') return;
+    setShowCreateProposal(true);
+  };
 
   const addProposal = (proposal: Omit<Proposal, 'id' | 'votes' | 'comments' | 'status' | 'daysLeft' | 'createdAt'>) => {
     const newProposal: Proposal = {
@@ -149,23 +163,50 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return <Home proposals={proposals} onNavigate={setCurrentPage} onCreateProposal={() => setShowCreateProposal(true)} />;
+        return (
+          <Home
+            proposals={proposals}
+            onNavigate={navigateWithPhase}
+            onCreateProposal={openCreateProposal}
+            currentPhase={currentPhase}
+            onSetPhase={setCurrentPhase}
+          />
+        );
       case 'map':
         return <MapView />;
       case 'proposals':
-        return <Proposals proposals={proposals} />;
+        return <Proposals proposals={proposals} currentPhase={currentPhase} />;
       case 'discussions':
-        return <Discussions />;
+        return <Discussions currentPhase={currentPhase} />;
       case 'impact':
         return <Impact />;
       default:
-        return <Home proposals={proposals} onNavigate={setCurrentPage} onCreateProposal={() => setShowCreateProposal(true)} />;
+        return (
+          <Home
+            proposals={proposals}
+            onNavigate={navigateWithPhase}
+            onCreateProposal={openCreateProposal}
+            currentPhase={currentPhase}
+            onSetPhase={setCurrentPhase}
+          />
+        );
     }
   };
 
   return (
-    <Layout currentPage={currentPage} onNavigate={setCurrentPage} showCreateProposal={showCreateProposal} setShowCreateProposal={setShowCreateProposal} onAddProposal={addProposal}>
-      {renderPage()}
-    </Layout>
+    <>
+      {!isAuthenticated ? (
+        <AuthScreen
+          onAuth={(user) => {
+            setCurrentUser(user);
+            setIsAuthenticated(true);
+          }}
+        />
+      ) : (
+        <Layout currentPage={currentPage} onNavigate={navigateWithPhase} showCreateProposal={showCreateProposal} setShowCreateProposal={setShowCreateProposal} onAddProposal={addProposal}>
+          {renderPage()}
+        </Layout>
+      )}
+    </>
   );
 }
