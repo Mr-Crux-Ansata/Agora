@@ -3,6 +3,7 @@ import {
   Home,
   Map,
   Vote,
+  PenLine,
   MessageSquare,
   TrendingUp,
   Bell,
@@ -18,18 +19,20 @@ import UserProfile from './UserProfile';
 import Notifications from './Notifications';
 import CreateProposal from './CreateProposal';
 
-type Page = 'home' | 'map' | 'proposals' | 'discussions' | 'impact';
+type Page = 'home' | 'map' | 'proposals' | 'voting' | 'results' | 'discussions' | 'impact' | 'proposal_forum';
 
 interface LayoutProps {
   children: ReactNode;
   currentPage: Page;
+  currentPhase: string;
+  resultsEnabled: boolean;
   onNavigate: (page: Page) => void;
   showCreateProposal: boolean;
   setShowCreateProposal: (show: boolean) => void;
   onAddProposal: (proposal: any) => void;
 }
 
-export default function Layout({ children, currentPage, onNavigate, showCreateProposal, setShowCreateProposal, onAddProposal }: LayoutProps) {
+export default function Layout({ children, currentPage, currentPhase, resultsEnabled, onNavigate, showCreateProposal, setShowCreateProposal, onAddProposal }: LayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationCount] = useState(3);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -38,10 +41,20 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
   const navigation = [
     { name: 'Inicio', page: 'home' as Page, icon: Home },
     { name: 'Mapa', page: 'map' as Page, icon: Map },
-    { name: 'Propuestas', page: 'proposals' as Page, icon: Vote },
+    { name: 'Propuestas', page: 'proposals' as Page, icon: PenLine },
     { name: 'Discusiones', page: 'discussions' as Page, icon: MessageSquare },
     { name: 'Impacto', page: 'impact' as Page, icon: TrendingUp },
   ];
+
+  const votingNavigation = currentPhase === 'voting'
+    ? [{ name: 'Votacion', page: 'voting' as Page, icon: Vote }]
+    : [];
+
+  const resultsNavigation = resultsEnabled
+    ? [{ name: 'Resultados', page: 'results' as Page, icon: Sparkles }]
+    : [];
+
+  const visibleNavigation = [...navigation.slice(0, 3), ...votingNavigation, ...resultsNavigation, ...navigation.slice(3)];
 
   const isActive = (page: Page) => {
     return currentPage === page;
@@ -64,7 +77,7 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
-              {navigation.map((item) => {
+              {visibleNavigation.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.page);
                 return (
@@ -130,7 +143,7 @@ export default function Layout({ children, currentPage, onNavigate, showCreatePr
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-fuchsia-100 bg-white/90 backdrop-blur-sm">
             <nav className="px-4 py-3 space-y-1">
-              {navigation.map((item) => {
+              {visibleNavigation.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.page);
                 return (

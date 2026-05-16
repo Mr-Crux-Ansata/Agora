@@ -3,19 +3,21 @@ import Layout from './components/Layout';
 import Home from './components/Home';
 import MapView from './components/MapView';
 import Proposals from './components/Proposals';
+import VotingSection from './components/VotingSection';
+import ResultsSection from './components/ResultsSection';
 import Discussions from './components/Discussions';
 import Impact from './components/Impact';
 import AuthScreen from './components/AuthScreen';
+import ProposalForumPage from './components/ProposalForumPage';
 
-type Page = 'home' | 'map' | 'proposals' | 'discussions' | 'impact';
+type Page = 'home' | 'map' | 'proposals' | 'voting' | 'results' | 'discussions' | 'impact' | 'proposal_forum';
 export type ParticipationPhase =
   | 'discovery'
   | 'proposal_submission'
   | 'institutional_evaluation'
   | 'community_deliberation'
   | 'voting'
-  | 'results_publication'
-  | 'continuous_project_tracking';
+  | 'results_publication';
 
 export type ProposalState =
   | 'draft'
@@ -54,6 +56,25 @@ export interface Proposal {
   createdAt: string;
   image: string;
   peopleBenefited?: number;
+}
+
+export type DraftForumType = 'discussion' | 'suggestion' | 'question' | 'local_context';
+
+export interface DraftForumEntry {
+  id: string;
+  type: DraftForumType;
+  author: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface DraftWorkspaceDraft {
+  title: string;
+  description: string;
+  neighborhood: string;
+  image: string;
+  territorialReference: string;
+  contextualInfo: string;
 }
 
 const initialProposals: Proposal[] = [
@@ -174,14 +195,35 @@ export default function App() {
   const [proposals, setProposals] = useState<Proposal[]>(initialProposals);
   const [showCreateProposal, setShowCreateProposal] = useState(false);
   const [currentPhase, setCurrentPhase] = useState<ParticipationPhase>('discovery');
+  const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
+  const [workspaceDrafts, setWorkspaceDrafts] = useState<Record<string, DraftWorkspaceDraft>>({});
+  const [forumEntries, setForumEntries] = useState<Record<string, DraftForumEntry[]>>({});
+  const [forumType, setForumType] = useState<Record<string, DraftForumType>>({});
+  const [forumText, setForumText] = useState<Record<string, string>>({});
+  const resultsEnabled = currentPhase === 'results_publication';
 
   const navigateWithPhase = (page: Page) => {
+    if (page === 'voting' && currentPhase !== 'voting') {
+      return;
+    }
+    if (page === 'results' && !resultsEnabled) {
+      return;
+    }
     setCurrentPage(page);
   };
 
   const openCreateProposal = () => {
     if (currentPhase !== 'proposal_submission') return;
     setShowCreateProposal(true);
+  };
+
+  const openProposalForum = (proposalId: string) => {
+    setSelectedProposalId(proposalId);
+    setCurrentPage('proposal_forum');
+  };
+
+  const closeProposalForum = () => {
+    setCurrentPage('proposals');
   };
 
   const addProposal = (proposal: Omit<Proposal, 'id' | 'votes' | 'comments' | 'state' | 'daysLeft' | 'createdAt'>) => {
@@ -239,6 +281,87 @@ export default function App() {
     );
   };
 
+  const getWorkspaceDraft = (proposalId: string): DraftWorkspaceDraft => {
+    const proposal = proposals.find((item) => item.id === proposalId);
+    if (!proposal) {
+      return {
+        title: '',
+        description: '',
+        neighborhood: '',
+        image: '',
+        territorialReference: '',
+        contextualInfo: ''
+      };
+    }
+
+    return (
+      workspaceDrafts[proposalId] || {
+        title: proposal.title,
+        description: proposal.description,
+        neighborhood: proposal.neighborhood,
+        image: proposal.image,
+        territorialReference: `Zona de referencia: ${proposal.neighborhood}`,
+        contextualInfo: ''
+      }
+    );
+  };
+
+  const updateWorkspaceDraftField = (proposalId: string, field: keyof DraftWorkspaceDraft, value: string) => {
+    const current = getWorkspaceDraft(proposalId);
+    setWorkspaceDrafts((prev) => ({
+      ...prev,
+      [proposalId]: {
+        ...current,
+        [field]: value
+      }
+    }));
+  };
+
+  const saveDraftChanges = (proposalId: string) => {
+    const draft = getWorkspaceDraft(proposalId);
+    updateProposalContent(proposalId, {
+      title: draft.title,
+      description: draft.description,
+      neighborhood: draft.neighborhood,
+      image: draft.image
+    });
+  };
+
+  const applyAiWritingAssist = (proposalId: string) => {
+    const draft = getWorkspaceDraft(proposalId);
+    const improved = `${draft.description.trim()}\n\nVersion mejorada con IA: Esta propuesta prioriza evidencia territorial, impacto comunitario medible y viabilidad institucional.`;
+    updateWorkspaceDraftField(proposalId, 'description', improved);
+  };
+
+  const addForumEntry = (proposalId: string) => {
+    const text = (forumText[proposalId] || '').trim();
+    if (!text) return;
+
+    const type = forumType[proposalId] || 'discussion';
+    const nextEntry: DraftForumEntry = {
+      id: `${proposalId}-${Date.now()}`,
+      type,
+      author: 'Ciudadania',
+      text,
+      createdAt: new Date().toISOString()
+    };
+
+    setForumEntries((prev) => ({
+      ...prev,
+      [proposalId]: [nextEntry, ...(prev[proposalId] || [])]
+    }));
+    setForumText((prev) => ({ ...prev, [proposalId]: '' }));
+  };
+
+  const getProposalForumEntries = (proposalId: string) => forumEntries[proposalId] || [];
+
+  const getNeighborhoodInterest = (proposalId: string) => {
+    const proposal = proposals.find((item) => item.id === proposalId);
+    if (!proposal) return 0;
+    const forumCount = getProposalForumEntries(proposalId).length;
+    return proposal.votes + proposal.comments + forumCount * 3;
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
@@ -259,9 +382,48 @@ export default function App() {
             proposals={proposals}
             currentPhase={currentPhase}
             onProposalStateChange={transitionProposalState}
-            onProposalUpdate={updateProposalContent}
+            onOpenProposalForum={openProposalForum}
+            getNeighborhoodInterest={getNeighborhoodInterest}
+            onOpenVotingSection={() => setCurrentPage('voting')}
           />
         );
+      case 'voting':
+        return <VotingSection proposals={proposals} currentPhase={currentPhase} />;
+      case 'results':
+        if (!resultsEnabled) {
+          return (
+            <Home
+              proposals={proposals}
+              onNavigate={navigateWithPhase}
+              onCreateProposal={openCreateProposal}
+              currentPhase={currentPhase}
+              onSetPhase={setCurrentPhase}
+            />
+          );
+        }
+        return <ResultsSection proposals={proposals} />;
+      case 'proposal_forum': {
+        const selectedProposal = proposals.find((proposal) => proposal.id === selectedProposalId) || null;
+        return (
+          <ProposalForumPage
+            proposal={selectedProposal}
+            currentPhase={currentPhase}
+            onBack={closeProposalForum}
+            onProposalStateChange={transitionProposalState}
+            workspaceDraft={selectedProposal ? getWorkspaceDraft(selectedProposal.id) : null}
+            forumEntries={selectedProposal ? getProposalForumEntries(selectedProposal.id) : []}
+            forumType={selectedProposal ? forumType[selectedProposal.id] || 'discussion' : 'discussion'}
+            forumText={selectedProposal ? forumText[selectedProposal.id] || '' : ''}
+            neighborhoodInterest={selectedProposal ? getNeighborhoodInterest(selectedProposal.id) : 0}
+            onDraftFieldChange={updateWorkspaceDraftField}
+            onSaveDraft={saveDraftChanges}
+            onAiAssist={applyAiWritingAssist}
+            onForumTypeChange={(proposalId, type) => setForumType((prev) => ({ ...prev, [proposalId]: type }))}
+            onForumTextChange={(proposalId, text) => setForumText((prev) => ({ ...prev, [proposalId]: text }))}
+            onAddForumEntry={addForumEntry}
+          />
+        );
+      }
       case 'discussions':
         return <Discussions currentPhase={currentPhase} />;
       case 'impact':
@@ -289,7 +451,7 @@ export default function App() {
           }}
         />
       ) : (
-        <Layout currentPage={currentPage} onNavigate={navigateWithPhase} showCreateProposal={showCreateProposal} setShowCreateProposal={setShowCreateProposal} onAddProposal={addProposal}>
+        <Layout currentPage={currentPage} currentPhase={currentPhase} resultsEnabled={resultsEnabled} onNavigate={navigateWithPhase} showCreateProposal={showCreateProposal} setShowCreateProposal={setShowCreateProposal} onAddProposal={addProposal}>
           {renderPage()}
         </Layout>
       )}

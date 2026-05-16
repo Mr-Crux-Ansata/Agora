@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import { ParticipationPhase, Proposal } from '../App';
 
-type Page = 'home' | 'map' | 'proposals' | 'discussions' | 'impact';
+type Page = 'home' | 'map' | 'proposals' | 'voting' | 'results' | 'discussions' | 'impact';
 
 interface HomeProps {
   proposals: Proposal[];
@@ -35,30 +35,29 @@ interface HomeProps {
 
 export default function Home({ proposals, onNavigate, onCreateProposal, currentPhase, onSetPhase }: HomeProps) {
   const phases: { id: ParticipationPhase; num: string; title: string; help: string; color: string; activeBg: string; activeBorder: string; activeText: string; icon: React.ReactNode }[] = [
-    { id: 'discovery',                   num: '1', title: 'Discovery',              help: 'Explora necesidades y proyectos de tu zona', color: 'from-blue-500 to-cyan-500',     activeBg: 'bg-blue-50',    activeBorder: 'border-blue-500',   activeText: 'text-blue-700',   icon: <Compass className="w-5 h-5" /> },
+    { id: 'discovery',                   num: '1', title: 'Discovery + Tracking',   help: 'Explora necesidades y da seguimiento continuo a proyectos', color: 'from-blue-500 to-cyan-500',     activeBg: 'bg-blue-50',    activeBorder: 'border-blue-500',   activeText: 'text-blue-700',   icon: <Compass className="w-5 h-5" /> },
     { id: 'proposal_submission',         num: '2', title: 'Proposal Submission',    help: 'Registro formal de propuestas ciudadanas',   color: 'from-violet-500 to-purple-600', activeBg: 'bg-violet-50',  activeBorder: 'border-violet-500', activeText: 'text-violet-700', icon: <PenLine className="w-5 h-5" /> },
     { id: 'institutional_evaluation',    num: '3', title: 'Institutional Evaluation', help: 'Revision tecnica, legal y presupuestal',    color: 'from-amber-500 to-orange-500',  activeBg: 'bg-amber-50',   activeBorder: 'border-amber-500',  activeText: 'text-amber-700',  icon: <ClipboardCheck className="w-5 h-5" /> },
     { id: 'community_deliberation',      num: '4', title: 'Community Deliberation', help: 'Debate publico y mejoras de propuestas',      color: 'from-teal-500 to-emerald-500',  activeBg: 'bg-teal-50',    activeBorder: 'border-teal-500',   activeText: 'text-teal-700',   icon: <MessageSquare className="w-5 h-5" /> },
     { id: 'voting',                      num: '5', title: 'Voting',                 help: 'Votacion abierta con reglas de elegibilidad', color: 'from-pink-500 to-rose-500',     activeBg: 'bg-pink-50',    activeBorder: 'border-pink-500',   activeText: 'text-pink-700',   icon: <CheckSquare className="w-5 h-5" /> },
-    { id: 'results_publication',         num: '6', title: 'Results Publication',    help: 'Publicacion de resultados y dictamen',       color: 'from-indigo-500 to-violet-600', activeBg: 'bg-indigo-50',  activeBorder: 'border-indigo-500',  activeText: 'text-indigo-700', icon: <Check className="w-5 h-5" /> },
-    { id: 'continuous_project_tracking', num: '7', title: 'Continuous Tracking',    help: 'Seguimiento permanente de obras',            color: 'from-slate-500 to-slate-700',   activeBg: 'bg-slate-100',  activeBorder: 'border-slate-500',   activeText: 'text-slate-700',  icon: <TrendingUp className="w-5 h-5" /> }
+    { id: 'results_publication',         num: '6', title: 'Results Publication',    help: 'Publicacion de resultados y dictamen',       color: 'from-indigo-500 to-violet-600', activeBg: 'bg-indigo-50',  activeBorder: 'border-indigo-500',  activeText: 'text-indigo-700', icon: <Check className="w-5 h-5" /> }
   ];
 
   const activePhase = phases.find(p => p.id === currentPhase)!;
 
   const phaseLabel: Record<ParticipationPhase, string> = {
-    discovery: 'Discovery',
+    discovery: 'Discovery + Tracking',
     proposal_submission: 'Proposal Submission',
     institutional_evaluation: 'Institutional Evaluation',
     community_deliberation: 'Community Deliberation',
     voting: 'Voting',
-    results_publication: 'Results Publication',
-    continuous_project_tracking: 'Continuous Project Tracking'
+    results_publication: 'Results Publication'
   };
 
   const canCreateProposal = currentPhase === 'proposal_submission';
   const canDeliberate = currentPhase === 'community_deliberation';
   const canVote = currentPhase === 'voting';
+  const canSeeResults = currentPhase === 'results_publication';
 
   const nearbyProposals = proposals.slice(0, 2).map((p, index) => ({
     id: p.id,
@@ -125,7 +124,18 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
       decoration: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
       enabled: canVote,
       lockedMsg: 'Voting',
-      onClick: () => onNavigate('proposals')
+      onClick: () => onNavigate('voting')
+    },
+    {
+      key: 'results',
+      icon: <CheckCircle2 className="w-10 h-10" />,
+      title: 'Ver resultados',
+      desc: 'Dictamen, aprobadas y seguimiento',
+      headerBg: 'bg-indigo-700',
+      decoration: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)',
+      enabled: canSeeResults,
+      lockedMsg: 'Proyecto ganador',
+      onClick: () => onNavigate('results')
     }
   ];
 
@@ -136,17 +146,55 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
       <div className="relative overflow-hidden bg-gradient-to-br from-purple-700 via-fuchsia-600 to-pink-500 text-white">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="max-w-2xl">
-            <span className="motion-rise inline-flex items-center gap-2 bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
-              <span className={`w-2 h-2 rounded-full bg-gradient-to-br ${activePhase.color}`} />
-              Fase activa: {phaseLabel[currentPhase]}
-            </span>
-            <h1 className="motion-rise-2 text-4xl sm:text-5xl font-bold leading-tight mb-3 tracking-tight">
-              Tu barrio,<br />tu decision
-            </h1>
-            <p className="motion-rise-3 text-lg text-purple-100">
-              Elige la fase en la que estas, luego usa las herramientas que se habiliten.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-5 lg:gap-6 items-start">
+            <div className="max-w-2xl">
+              <span className="motion-rise inline-flex items-center gap-2 bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                <span className={`w-2 h-2 rounded-full bg-gradient-to-br ${activePhase.color}`} />
+                Fase activa: {phaseLabel[currentPhase]}
+              </span>
+              <h1 className="motion-rise-2 text-4xl sm:text-5xl font-bold leading-tight mb-3 tracking-tight">
+                Tu barrio,<br />tu decision
+              </h1>
+              <p className="motion-rise-3 text-lg text-purple-100">
+                Elige la fase en la que estas, luego usa las herramientas que se habiliten.
+              </p>
+            </div>
+
+            {canVote && (
+              <div className="motion-rise-2 rounded-2xl border border-white/40 bg-white/20 backdrop-blur-sm p-4 sm:p-5 shadow-xl shadow-fuchsia-900/30">
+                <p className="text-xs font-semibold uppercase tracking-wider text-pink-100 mb-1">Momento de votar</p>
+                <p className="text-base sm:text-lg font-bold leading-snug text-white mb-3">
+                  La votacion esta abierta ahora.
+                  <br />
+                  Participa y prioriza proyectos para tu comunidad.
+                </p>
+                <button
+                  onClick={() => onNavigate('voting')}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-base font-extrabold text-fuchsia-700 shadow-md hover:bg-fuchsia-50 transition-colors"
+                >
+                  <Vote className="w-5 h-5" />
+                  Ir a votar ahora
+                </button>
+              </div>
+            )}
+
+            {canSeeResults && (
+              <div className="motion-rise-2 rounded-2xl border border-white/40 bg-white/20 backdrop-blur-sm p-4 sm:p-5 shadow-xl shadow-indigo-900/30">
+                <p className="text-xs font-semibold uppercase tracking-wider text-indigo-100 mb-1">Momento de resultados</p>
+                <p className="text-base sm:text-lg font-bold leading-snug text-white mb-3">
+                  Los dictamenes ya estan publicados.
+                  <br />
+                  Revisa aprobaciones, rechazos y seguimiento.
+                </p>
+                <button
+                  onClick={() => onNavigate('results')}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-base font-extrabold text-indigo-700 shadow-md hover:bg-indigo-50 transition-colors"
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                  Ver resultados ahora
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -266,7 +314,7 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
             <div className="rounded-xl border border-slate-200 bg-white p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Fases Globales</p>
               <p className="text-sm text-slate-700 leading-relaxed">
-                Discovery {'>'} Proposal Submission {'>'} Institutional Evaluation {'>'} Community Deliberation {'>'} Voting {'>'} Results Publication {'>'} Continuous Project Tracking
+                Discovery + Tracking {'>'} Proposal Submission {'>'} Institutional Evaluation {'>'} Community Deliberation {'>'} Voting {'>'} Results Publication
               </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -290,7 +338,7 @@ export default function Home({ proposals, onNavigate, onCreateProposal, currentP
           <div className="absolute right-0 top-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="flex-1">
-              <p className="text-xs font-semibold tracking-widest uppercase text-blue-200 mb-1">Siempre activa</p>
+              <p className="text-xs font-semibold tracking-widest uppercase text-blue-200 mb-1">Integrada en Discovery</p>
               <h3 className="text-xl font-bold mb-1">Capa de Seguimiento Continuo</h3>
               <p className="text-blue-100 text-sm">Obras en progreso, evidencia publica, cronogramas, reportes ciudadanos e inversion historica por barrio.</p>
             </div>
