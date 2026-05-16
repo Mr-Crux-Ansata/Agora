@@ -93,6 +93,7 @@ export default function ProposalForumPage({
   const isCommunityCollaboration = isStage1 || isStage2;
   const isLocked = !isCommunityCollaboration;
   const isInstitutionalEvaluationPhase = currentPhase === 'institutional_evaluation';
+  const canPostDiscussions = currentPhase === 'results_publication';
   const visibleStateLabel = isInstitutionalEvaluationPhase
     ? 'En proceso de evaluacion'
     : stateLabel[proposal.state] || proposal.state;
@@ -315,7 +316,7 @@ export default function ProposalForumPage({
             ))}
           </div>
 
-          {isCommunityCollaboration ? (
+          {canPostDiscussions ? (
             <div className="mt-3 grid grid-cols-1 sm:grid-cols-4 gap-2">
               <select
                 value={forumType}
@@ -343,7 +344,7 @@ export default function ProposalForumPage({
             </div>
           ) : (
             <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 p-2 text-xs text-slate-600">
-              Foro en modo lectura durante el proceso oficial. El historial queda visible para transparencia.
+              Foro en modo lectura hasta la fase 4. El historial queda visible para transparencia.
             </div>
           )}
         </section>

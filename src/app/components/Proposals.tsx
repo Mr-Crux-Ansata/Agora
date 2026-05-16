@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import {
-  Heart,
-  MessageCircle,
   MapPin,
   Filter,
   Search,
@@ -438,28 +436,16 @@ export default function Proposals({ proposals, currentPhase, onProposalStateChan
               </div>
 
               {/* Engagement */}
-              {currentPhase !== 'proposal_submission' && (
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span className="flex items-center gap-1">
-                      <Heart className="w-4 h-4" />
-                      {proposal.votes}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MessageCircle className="w-4 h-4" />
-                      {proposal.comments}
-                    </span>
-                  </div>
-                  {proposal.daysLeft && (
-                    <span className="text-sm text-gray-600 flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {proposal.daysLeft} dias restantes
-                    </span>
-                  )}
+              {proposal.daysLeft && (
+                <div className="mb-4 flex items-center justify-end">
+                  <span className="text-sm text-gray-600 flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    {proposal.daysLeft} dias restantes
+                  </span>
                 </div>
               )}
 
-              {proposal.state === 'rejected' && (
+              {proposal.state === 'rejected' && currentPhase === 'results_publication' && (
                 <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">
                   <p className="font-semibold mb-1">Razon de rechazo</p>
                   <p>

@@ -423,7 +423,7 @@ export default function App() {
           />
         );
       case 'map':
-        return <MapView proposals={proposals} />;
+        return <MapView proposals={proposals} currentPhase={currentPhase} />;
       case 'proposals':
         if (!proposalsEnabled) {
           return (
